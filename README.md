@@ -21,7 +21,7 @@ Various automations and helper scripts are provided, but in depth configuration 
 
 ### Using the DockerHub provided image
 
-* First take a look at [docker-compose\Dedicated-Server\docker-compose.yml](docker-compose\Dedicated-Server\docker-compose.yml) and make amendments as needed, taking care with the volume binds ensuring the chosen location has sufficient storage.
+* First take a look at [docker-compose/Dedicated-Server/docker-compose.yml](docker-compose/Dedicated-Server/docker-compose.yml) and make amendments as needed, taking care with the volume binds ensuring the chosen location has sufficient storage.
 * Copy and amend ``.env.example `` to ``.env`` as required. If you want to validate the correct settings are applied you can run ``docker compose config`` to display what Docker will use.
 * Start the container by navigating to the ``docker-compose\Dedicated-Server\`` directory and run the command ``docker compose up -d && docker logs -f dcs-world-dedicated-server``.
 * On first start the container will download and install the WINE prerequisites and modular Dedicated DCS server executable. 
@@ -45,7 +45,7 @@ Various automations and helper scripts are provided, but in depth configuration 
 
         => => naming to docker.io/myusername/dcs-world-dedicated-server
 
-* Amend the [docker-compose\Dedicated-Server\docker-compose.yml](docker-compose\Dedicated-Server\docker-compose.yml) image line to: 
+* Amend the [docker-compose/Dedicated-Server/docker-compose.yml](docker-compose/Dedicated-Server/docker-compose.yml) image line to: 
   
         image: myusername/dcs-world-dedicated-server
 
