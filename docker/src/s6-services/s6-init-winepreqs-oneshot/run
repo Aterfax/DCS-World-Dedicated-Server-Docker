@@ -23,7 +23,7 @@ cat /etc/s6-overlay/s6-rc.d/init-winepreqs-oneshot/branding
 lsiown -R abc:users /config/.wine | output_to_log
 lsiown -R abc:users /config/.cache | output_to_log
 
-winecfg
+sudo -u abc winecfg
 
 # Install the wine dependencies.
 # Note that this will not reinstall the dependencies if they are already installed.

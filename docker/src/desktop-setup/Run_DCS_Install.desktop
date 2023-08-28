@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Run DCS Install
+Comment=
+Exec=/app/dcs_server/wine-dedicated-dcs-automated-installer/dcs-dedicated-server-automatic-installer.sh
+Icon=E31E_unins000.0
+Path=
+Terminal=true
+StartupNotify=false

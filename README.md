@@ -30,17 +30,16 @@ Various automations and helper scripts are provided, but in depth configuration 
 * Start the container by navigating to the ``docker-compose\Dedicated-Server\`` directory and run the command ``docker compose up -d && docker logs -f dcs-world-dedicated-server``.
 * On first start the container will download and install the WINE prerequisites and modular Dedicated DCS server executable. 
 * Wait until the installation of these prerequisites is finished then open the WebGUI at port ``3000`` or your chosen port.
-* The installation of the modular DCS dedicated server is (presently) manually requested by the user, open a terminal and run the command:
+* The installation of the modular DCS dedicated server is (presently) manually requested by the user, you can run the installer with the ``Run DCS Install`` desktop shortcut or open a terminal and run the command:
         
         /app/dcs_server/wine-dedicated-dcs-automated-installer/dcs-dedicated-server-automatic-installer.sh 
     
 * The installation is fully automated from this point and while it is running you must not click or otherwise disturb the GUI session.
 * Once the download has started, you can resume using the GUI session.
-* When the download and installation of the base server is finished, you can add the desired modules running the command the following command and following the instructions:
-        
-        /app/dcs_server/wine-dedicated-dcs-automated-installer/dcs-dedicated-server-module-installer.sh
+* When the download and installation of the base server is finished, click "Ok" and then the installer will run the module installer script in the terminal window for you to select the terrain you want:
 
 * On first run of the dedicated server, you will need to login, but the login window will be hidden behind the DCS splash screen. Right click on the Login window in the task bar and click move. It should now be visible for you to login to.
+* Various shortcuts will now have been added to the desktop for opening the server WebGUI or running and updating the DCS server or opening DCS server related directories.
 
 ### Using a self built image
 
@@ -67,11 +66,11 @@ The upload of files to this folder can be done using the KASM menu's file manage
 
 ### Installation / uninstallation of modules
 
-To install or uninstall modules you can run the helper script in a terminal and follow the instructions on screen:
+To install or uninstall modules you can run the ``Run_DCS_Module_Installer`` shortcut on the desktop or the helper script directly in a terminal then follow the instructions on screen:
 
     /app/dcs_server/wine-dedicated-dcs-automated-installer/dcs-dedicated-server-module-installer.sh
 
-**Note:** The server installation must have finished before installation of modules!
+**Note:** The base server installation must have finished before installation of modules!
 
 ## Troubleshooting
 

@@ -24,5 +24,9 @@ RUN touch etc/s6-overlay/s6-rc.d/user/contents.d/init-winepreqs-oneshot
 COPY ./src/s6-services/s6-init-getlatest-dcs-installer-oneshot /etc/s6-overlay/s6-rc.d/init-getlatest-dcs-installer-oneshot
 RUN touch etc/s6-overlay/s6-rc.d/user/contents.d/init-getlatest-dcs-installer-oneshot
 
+COPY ./src/s6-services/s6-init-desktop-setup-oneshot /etc/s6-overlay/s6-rc.d/init-desktop-setup-oneshot
+RUN touch etc/s6-overlay/s6-rc.d/user/contents.d/init-desktop-setup-oneshot
+
 COPY ./src/xdotool-sequences /app/dcs_server/xdotool-sequences
 COPY ./src/wine-dedicated-dcs-automated-installer /app/dcs_server/wine-dedicated-dcs-automated-installer
+COPY ./src/desktop-setup /app/dcs_server/desktop-setup
