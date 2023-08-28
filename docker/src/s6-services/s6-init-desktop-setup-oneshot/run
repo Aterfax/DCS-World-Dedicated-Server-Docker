@@ -1,0 +1,36 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash
+
+# Define a logging function to prefix output to the docker logs.
+output_to_log() {
+    sed  's/^/[s6-init-desktop-setup] /'
+}
+
+# Function to copy files if hashes differ
+copy_if_hash_differs() {
+    local source_path="$1"
+    local destination_path="$2"
+
+    # Calculate MD5 hash of the source file
+    source_hash=$(md5sum "$source_path" | awk '{print $1}')
+
+    # Calculate MD5 hash of the destination file (if it exists)
+    if [ -f "$destination_path" ]; then
+        destination_hash=$(md5sum "$destination_path" | awk '{print $1}')
+    else
+        destination_hash=""
+    fi
+
+    # Compare hashes
+    if [ "$source_hash" = "$destination_hash" ]; then
+        echo "Not updating $destination_path as file already matches." | output_to_log
+    else
+        # Copy the file
+        cp "$source_path" "$destination_path"
+        echo "Updating $destination_path as file does not match source file from the Docker image." | output_to_log
+    fi
+}
+
+# copy_if_hash_differs SRC DEST
+copy_if_hash_differs "/app/dcs_server/desktop-setup/Run_DCS_Install.desktop" "/config/Desktop/Run_DCS_Install.desktop"
+
