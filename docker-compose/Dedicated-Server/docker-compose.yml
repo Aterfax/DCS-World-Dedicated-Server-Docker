@@ -1,0 +1,17 @@
+version: '3.3'
+services:
+  ptero-dcs-world-dedicated-server:
+    container_name: dcs-world-dedicated-server
+    environment:
+      - PUID=$PUID
+      - PGID=$PGID
+      - TZ=$TZ
+      - PASSWORD=$VNCPASSWORD
+    ports:
+      - '3000:3000'
+      - '3001:3001'
+      - '10308:10308'
+    volumes:
+      - '/home/${USER}/dcs-world-dedicated-server:/config/'
+    restart: always
+    image: aterfax/dcs-world-dedicated-server

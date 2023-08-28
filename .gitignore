@@ -6,11 +6,6 @@ Thumbs.db
 .vscode/
 *.code-workspace
 
-# Docker
-docker-compose.override.yml
-docker-compose.yml
-.dockerignore
-
 # Node.js (if applicable)
 node_modules/
 npm-debug.log*

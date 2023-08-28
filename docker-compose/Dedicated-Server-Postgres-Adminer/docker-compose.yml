@@ -1,0 +1,42 @@
+version: '3.3'
+services:
+  ptero-dcs-world-dedicated-server:
+    container_name: dcs-world-dedicated-server
+    environment:
+      - PUID=$PUID
+      - PGID=$PGID
+      - TZ=$TZ
+      - PASSWORD=$VNCPASSWORD
+    ports:
+      - '3000:3000'
+      - '3001:3001'
+      - '10308:10308'
+    volumes:
+      - '/home/${USER}/dcs-world-dedicated-server:/config/'
+    restart: always
+    image: aterfax/dcs-world-dedicated-server
+    networks:
+      - db_shared_network
+
+  postgres:
+    container_name: dcs-world-dedicated-server-postgres
+    environment:
+      - POSTGRES_USER=$POSTGRES_USER
+      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+      - POSTGRES_DB=$POSTGRES_DB
+    volumes:
+      - '/home/${USER}/dcs-world-dedicated-server/postgres:/var/lib/postgresql/data'
+    restart: always
+    image: postgres:latest
+    networks:
+      - db_shared_network
+
+  adminer:
+    image: adminer
+    container_name: dcs-world-dedicated-server-adminer
+    restart: always
+    networks:
+      - db_shared_network
+
+networks:
+  db_shared_network:
