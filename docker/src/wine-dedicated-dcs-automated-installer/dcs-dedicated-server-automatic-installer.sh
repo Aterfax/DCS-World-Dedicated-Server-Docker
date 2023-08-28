@@ -28,7 +28,7 @@ create_desktop_shortcut() {
 }
 
 # Start the installer
-wine DCS_World_OpenBeta_Server_modular.exe &
+wine /config/DCS_World_OpenBeta_Server_modular.exe &
 
 # Wait for it to fully open
 sleep 5
