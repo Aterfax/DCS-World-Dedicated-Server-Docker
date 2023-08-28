@@ -59,7 +59,7 @@ After installation configuration, missions etc... can be added to the following 
 
 The upload of files to this folder can be done using the KASM menu's file manager.
 
-![KASM File manager screenshot](assets\images\kasm-file-manager.png "KASM File manager screenshot")
+![KASM File manager screenshot](assets/images/kasm-file-manager.png "KASM File manager screenshot")
 
 ### Installation / uninstallation of modules
 
