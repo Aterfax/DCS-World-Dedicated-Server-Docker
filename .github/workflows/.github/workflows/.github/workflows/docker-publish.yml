@@ -39,8 +39,8 @@ jobs:
           context: .
           push: true
           tags: |
-            aterfax/DCS-World-Dedicated-Server:latest 
-            ghcr.io/aterfax/DCS-World-Dedicated-Server:latest
+            aterfax/dcs-world-dedicated-server:latest 
+            ghcr.io/aterfax/dcs-world-dedicated-server:latest
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}

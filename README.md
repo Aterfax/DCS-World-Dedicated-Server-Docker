@@ -39,14 +39,14 @@ Various automations and helper scripts are provided, but in depth configuration 
 
 ### Using a self built image
 
-* Navigate to the ``docker`` subdirectory and run the command ``docker build   -t $USER/ptero-dcs-world-dedicated-server  .``
+* Navigate to the ``docker`` subdirectory and run the command ``docker build   -t $USER/dcs-world-dedicated-server  .``
 * Take a note of the final line of this command's output e.g. :
 
-        => => naming to docker.io/myusername/ptero-dcs-world-dedicated-server
+        => => naming to docker.io/myusername/dcs-world-dedicated-server
 
 * Amend the [docker-compose\Dedicated-Server\docker-compose.yml](docker-compose\Dedicated-Server\docker-compose.yml) image line to: 
   
-        image: myusername/ptero-dcs-world-dedicated-server
+        image: myusername/dcs-world-dedicated-server
 
 * You can now follow the instructions as per the [Using the DockerHub provided image](###Using-the-DockerHub-provided-image) section.
 
