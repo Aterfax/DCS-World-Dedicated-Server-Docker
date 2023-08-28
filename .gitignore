@@ -1,0 +1,54 @@
+# General
+.DS_Store
+Thumbs.db
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# Docker
+docker-compose.override.yml
+docker-compose.yml
+.dockerignore
+
+# Node.js (if applicable)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python (if applicable)
+__pycache__/
+*.py[cod]
+
+# Compiled files
+*.o
+*.ko
+*.obj
+*.elf
+
+# Build artifacts
+build/
+bin/
+out/
+dist/
+target/
+
+# IDE-specific files
+.idea/
+*.sln
+*.swp
+
+# Logs and temporary files
+*.log
+*.tmp
+*.pid
+*.bak
+
+# Compiled Python files
+*.pyc
+__pycache__/
+
+# Virtual environment
+venv/
+.env

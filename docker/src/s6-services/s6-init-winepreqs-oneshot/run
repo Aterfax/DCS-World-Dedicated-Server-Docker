@@ -1,0 +1,33 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash
+
+# Define a logging function to prefix output to the docker logs.
+output_to_log() {
+    sed  's/^/[s6-init-winepreqs-oneshot] /'
+}
+
+# Set up error handling
+handle_error() {
+    local exit_code="$?"
+    echo -e "Error occurred (Exit code: $exit_code)"  | output_to_log
+    exit "$exit_code"
+}
+trap handle_error ERR
+
+# Enable immediate exit on error
+set -e
+
+cat /etc/s6-overlay/s6-rc.d/init-winepreqs-oneshot/branding
+
+# Ensure that the wine prefix is owned by the user from the container.
+lsiown -R abc:users /config/.wine | output_to_log
+lsiown -R abc:users /config/.cache | output_to_log
+
+winecfg
+
+# Install the wine dependencies.
+# Note that this will not reinstall the dependencies if they are already installed.
+sudo -u abc /usr/bin/winetricks --unattended d3dcompiler_43 | output_to_log
+sudo -u abc /usr/bin/winetricks --unattended d3dx11_43 | output_to_log
+sudo -u abc /usr/bin/winetricks --unattended d3dcompiler_47 | output_to_log
+sudo -u abc /usr/bin/winetricks --unattended win10 | output_to_log
