@@ -28,7 +28,7 @@ jobs:
       - name: Build image only
         uses: docker/build-push-action@v2
         with:
-          context: .
+          context: ./docker
           push: false
 
       - name: Image digest
