@@ -1,5 +1,9 @@
 # DCS-World-Dedicated-Server-Docker
 
+[![Build and Publish Docker Image](https://github.com/Aterfax/DCS-World-Dedicated-Server-Docker/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/Aterfax/DCS-World-Dedicated-Server-Docker/actions/workflows/docker-publish.yml)
+![Docker Image Size (tag)](https://img.shields.io/docker/image-size/aterfax/dcs-world-dedicated-server/latest)
+![Docker Pulls](https://img.shields.io/docker/pulls/aterfax/dcs-world-dedicated-server)
+
 This repository provides a Docker image created in order to run the DCS World Dedicated server using WINE and is based on the Alpine version of the [linuxserver/webtop image](https://docs.linuxserver.io/images/docker-webtop). 
 
 Various automations and helper scripts are provided, but in depth configuration and management of the server is likely best done via the provided WebGUI.
