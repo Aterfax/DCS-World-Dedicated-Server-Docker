@@ -108,7 +108,7 @@ for wid in $window_ids; do
     xdotool windowactivate --sync $wid key Return &
 done
 
-sleep 5
+sleep 15
 echo
 
 # Run the module installer
