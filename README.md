@@ -62,6 +62,12 @@ Various automations and helper scripts are provided. In depth configuration and 
 
 * You can now follow the instructions as per the [Using the DockerHub provided image](#Using-the-DockerHub-provided-image) section.
 
+## Example installation video
+
+[![ DCS World Dedicated Server Docker example install video ](https://i.ytimg.com/vi/dZgVrbjI6r4/maxresdefault.jpg?sqp=-oaymwEmCIAKENAF8quKqQMa8AEB-AH-CYAC0AWKAgwIABABGEUgVShyMA8=&rs=AOn4CLDhu0V7GId6fVRUBWQdYkSq_zha-w)](https://www.youtube.com/watch?v=dZgVrbjI6r4 " DCS World Dedicated Server Docker example install video ")
+
+**Hint:** Click the image to go to Youtube.
+
 ## Configuration
 
 After installation is complete, you can configure your server as you would do so typically, editing configuration or adding missions etc... at to the following path (which you can also open from the ``DCS Saved Games Dir`` desktop shortcut):
