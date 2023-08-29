@@ -1,10 +1,6 @@
 #!/bin/bash
 # shellcheck shell=bash
 
-get_dcs_installer_window_id() {
-    echo $(xdotool search --name "DCS Updater")
-}
-
 create_desktop_shortcut() {
     target_executable="$1"
     icon_path="$2"
@@ -92,18 +88,31 @@ create_desktop_shortcut "xdg-open '/config/.wine/drive_c/Program Files/Eagle Dyn
 # Sleep for a bit to ensure the installer window is open.
 sleep 5
 
-dcs_installer_window_id=$(get_dcs_installer_window_id)
-
 while true; do
-    if [[ -z $dcs_installer_window_id ]]; then
-        echo
-        echo
-        break
+    # Run the command and store the output in the variable 'count'
+    count=$(xdotool search --name "DCS Updater" | wc -l)
+    
+    # Check if the value of 'count' is equal to 3
+    # 3 windows = installion is finished "Ok" prompt.
+    if [ "$count" -eq 3 ]; then
+        break  # Exit the loop if the condition is met
     fi
+    
+    # Wait for a few seconds before running the command again
     sleep 5
-    echo -e "Waiting for the installer to finish before starting module installer."    
-    dcs_installer_window_id=$(get_dcs_installer_window_id)
 done
+
+# Get the window IDs and iterate through each
+window_ids=$(xdotool search --name "DCS Updater")
+for wid in $window_ids; do
+    xdotool windowactivate --sync $wid key Return &
+done
+
+sleep 5
+echo
 
 # Run the module installer
 /app/dcs_server/wine-dedicated-dcs-automated-installer/dcs-dedicated-server-module-installer.sh
+
+echo
+echo "Install complete."
