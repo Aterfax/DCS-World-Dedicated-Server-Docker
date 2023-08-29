@@ -14,7 +14,7 @@ services:
       - '3001:3001'
       - '10308:10308'
     volumes:
-      - '/home/${USER}/dcs-world-dedicated-server:/config/'
+      - '${HOME}/dcs-world-dedicated-server:/config/'
     restart: always
     image: aterfax/dcs-world-dedicated-server
     networks:
@@ -27,7 +27,7 @@ services:
       - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
       - POSTGRES_DB=$POSTGRES_DB
     volumes:
-      - '/home/${USER}/dcs-world-dedicated-server/postgres:/var/lib/postgresql/data'
+      - '${HOME}/dcs-world-dedicated-server/postgres:/var/lib/postgresql/data'
     restart: always
     image: postgres:latest
     networks:
