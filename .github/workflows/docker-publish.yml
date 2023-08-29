@@ -3,6 +3,9 @@ name: Build and Publish Docker Image
 on:
   push:
     branches: [main]
+  schedule:
+      # * is a special character in YAML so you have to quote this string
+      - cron:  '0 9 * * 6'
 
   workflow_dispatch:
 
@@ -31,7 +34,11 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      
+
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+
       - name: Build image and push to Docker Hub and GitHub Container Registry
         uses: docker/build-push-action@v4
         with:
@@ -40,6 +47,8 @@ jobs:
           tags: |
             aterfax/dcs-world-dedicated-server:latest 
             ghcr.io/aterfax/dcs-world-dedicated-server:latest
+            aterfax/dcs-world-dedicated-server:${{ steps.date.outputs.date }}
+            ghcr.io/aterfax/dcs-world-dedicated-server:${{ steps.date.outputs.date }}
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
