@@ -27,17 +27,17 @@ Various automations and helper scripts are provided. In depth configuration and 
 
 ### Using the DockerHub provided image
 
-* First familiarise yourself with the [linuxserver/webtop image](https://docs.linuxserver.io/images/docker-webtop) image and consult their documentation on how to make use of the provided web accessible GUI functionality. Particularly how to secure this and add SSL certificates where needed.
-* Take a look at [docker-compose/Dedicated-Server](docker-compose/Dedicated-Server/) folder and ``docker-compose.yml`` file. Make amendments as needed, taking care with the volume binds ensuring the chosen location has sufficient storage.
+* First familiarise yourself with the [linuxserver/webtop image](https://docs.linuxserver.io/images/docker-webtop) image and consult their documentation on how to make use of the provided web accessible GUI functionality. Particularly how to secure access to the running container and adding SSL certificates where needed.
+* Take a look at the [docker-compose/Dedicated-Server](docker-compose/Dedicated-Server/) folder and ``docker-compose.yml`` file. Make amendments as needed, taking care with the volume binds ensuring the chosen location has sufficient storage.
 * Copy and amend ``.env.example `` to ``.env`` as required. If you want to validate the correct settings are applied you can run ``docker compose config`` to display what Docker will use.
-* Start the container by navigating to the ``docker-compose/Dedicated-Server/`` directory and run the command ``docker compose up -d && docker logs -f dcs-world-dedicated-server``.
-* On first start the container will download and install the WINE prerequisites and modular Dedicated DCS server executable and you must wait until the installation of these prerequisites is finished then open the WebGUI at port ``3000`` or your chosen port.
-* The installation of the modular DCS dedicated server is (presently) manually requested by the user, you can run the installer with the ``Run DCS Install`` desktop shortcut or open a terminal and run the command:
+* To start the container, navigate to the [docker-compose/Dedicated-Server](docker-compose/Dedicated-Server/) directory and then run the command ``docker compose up -d && docker logs -f dcs-world-dedicated-server``.
+* On first start the container will download and install the WINE prerequisites and modular Dedicated DCS server executable. You must wait until the installation of these prerequisites is finished, then open the WebGUI at the default port ``3000`` or your chosen port.
+* The installation of the modular DCS dedicated server is (presently) manually requested by the user. You can run the installer with the ``Run DCS Install`` desktop shortcut or open a terminal and run the command:
         
         /app/dcs_server/wine-dedicated-dcs-automated-installer/dcs-dedicated-server-automatic-installer.sh 
 
-* **Note:** If you have set the environment variables ``DCSAUTOINSTALL=1`` and given a valid ``DCSMODULES`` list in your ``docker-compose.yml`` file, the installer will be fully automated from this point. If you have not elected to set the above, the installer will first install the base server and then prompt you to interactively choose the modules to install. 
-* While installation is ongoing, you can use the GUI session but must avoid clicking any of the DCS Updater or installation windows.
+* **Note:** If you have set the environment variables ``DCSAUTOINSTALL=1`` and given a valid ``DCSMODULES`` list in your docker compose ``.env`` file, the installer will be fully automated from this point. If you have not elected to set the above, the installer will first install the base server and then prompt you to interactively choose the modules to install. 
+* While installation is ongoing, you can use the webGUI session but must avoid clicking any of the DCS Updater or installation windows.
 * **Important:** On first run of the dedicated server, you will need to login, but the login window will be hidden behind the DCS splash screen (ED go figure... smh...). Right click on the Login window in the task bar and click "Move". You can now move it and make it visible for you to login to.
 * Post server installation, various shortcuts will now also have been added to the desktop for opening the server WebGUI or running and updating the DCS server, installing or removing modules and opening DCS server related directories.
 
@@ -52,7 +52,7 @@ Various automations and helper scripts are provided. In depth configuration and 
   
         image: myusername/dcs-world-dedicated-server
 
-* You can now follow the instructions as per the [Using the DockerHub provided image](###Using-the-DockerHub-provided-image) section.
+* You can now follow the instructions as per the [Using the DockerHub provided image](#Using-the-DockerHub-provided-image) section.
 
 ## Configuration
 
