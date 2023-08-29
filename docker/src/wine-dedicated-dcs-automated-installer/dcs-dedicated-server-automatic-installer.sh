@@ -123,26 +123,42 @@ create_desktop_shortcut "xdg-open '/config/.wine/drive_c/Program Files/Eagle Dyn
 # Sleep for a bit to ensure the installer window is open.
 sleep 5
 
+window_ids=$(xdotool search --name "DCS Updater")
+
 # Check if the value of number of DCS Updater windows is equal to 3
 # 3 windows means the installation is waiting at the finished "Ok" prompt.
 wait_for_dcs_updater_windows 3
 
-# Get the window IDs and iterate through each to hit enter on the "Ok" prompt.
-window_ids=$(xdotool search --name "DCS Updater")
-for wid in $window_ids; do
-    xdotool windowactivate --sync $wid key Return &
+all_window_ids=$(xdotool search --name "DCS Updater")
+
+# Get the odd window id out as this is our "Ok" window.
+ok_window_id=""
+
+# Split the variables into arrays
+IFS=' ' read -ra window_ids_array <<< "$window_ids"
+IFS=' ' read -ra all_window_ids_array <<< "$all_window_ids"
+
+for num in "${all_window_ids_array[@]}"; do
+    # Check if the number is not in window_ids_array
+    if [[ ! " ${window_ids_array[*]} " =~ " $num " ]]; then
+        ok_window_id="$num"
+        break
+    fi
 done
 
+# Hit the "Ok" prompt.
+xdotool windowactivate --sync $ok_window_id key Return Return
+
 # Wait a bit for all WINE gubbins to go away.
-sleep 15
+sleep 5
 echo
+
+# Check if the value of number of DCS Updater windows is equal to 0
+# 0 windows = installion is complete.
+wait_for_dcs_updater_windows 0
 
 # Run the module installer
 if [ "$DCSAUTOINSTALL" -eq 1 ]; then
-
-    # Check if the value of number of DCS Updater windows is equal to 0
-    # 0 windows = installion is complete.
-    wait_for_dcs_updater_windows 0
     /app/dcs_server/wine-dedicated-dcs-automated-installer/dcs-dedicated-server-module-installer.sh install "$DCSMODULES"
 else
     /app/dcs_server/wine-dedicated-dcs-automated-installer/dcs-dedicated-server-module-installer.sh
