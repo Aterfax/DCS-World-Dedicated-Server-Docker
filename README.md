@@ -4,7 +4,15 @@
 ![Docker Image Size (tag)](https://img.shields.io/docker/image-size/aterfax/dcs-world-dedicated-server/latest)
 ![Docker Pulls](https://img.shields.io/docker/pulls/aterfax/dcs-world-dedicated-server)
 
-This repository provides a Docker image created in order to run the DCS World Dedicated server using WINE and is based on the Alpine version of the [linuxserver/webtop image](https://docs.linuxserver.io/images/docker-webtop). 
+## **tl;dr?**
+
+**Q:** What does this Docker image do? 
+
+**A:** It lets you run the DCS Dedicated server on Linux (in a Docker container) with web based access to a GUI running the xfce desktop environment.
+
+## Longer summary
+
+This repository provides a Docker image created in order to run the DCS World Dedicated server using WINE (relatively painlessly) and is based on the Alpine version of the [linuxserver/webtop image](https://docs.linuxserver.io/images/docker-webtop). 
 
 Various automations and helper scripts are provided. In depth configuration and management of the server is best done via the provided WebGUI (that's mainly why this image is based on the [linuxserver/webtop image](https://docs.linuxserver.io/images/docker-webtop) image.)
 
