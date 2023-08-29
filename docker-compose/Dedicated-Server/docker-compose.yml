@@ -14,6 +14,6 @@ services:
       - '3001:3001'
       - '10308:10308'
     volumes:
-      - '/home/${USER}/dcs-world-dedicated-server:/config/'
+      - '${HOME}/dcs-world-dedicated-server:/config/'
     restart: always
     image: aterfax/dcs-world-dedicated-server
