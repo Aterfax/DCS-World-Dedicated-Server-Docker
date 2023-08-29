@@ -36,14 +36,14 @@ Various automations and helper scripts are provided, but in depth configuration 
     
 * The installation is fully automated from this point and while it is running you must not click or otherwise disturb the GUI session.
 * Once the download has started, you can resume using the GUI session.
-* When the download and installation of the base server is finished, click "Ok" and then the installer will run the module installer script in the terminal window for you to select the terrain you want:
+* When the download and installation of the base server is finished, the installer will run the module installer script in the terminal window for you to select the terrain you want:
 
 * On first run of the dedicated server, you will need to login, but the login window will be hidden behind the DCS splash screen. Right click on the Login window in the task bar and click move. It should now be visible for you to login to.
 * Various shortcuts will now have been added to the desktop for opening the server WebGUI or running and updating the DCS server or opening DCS server related directories.
 
 ### Using a self built image
 
-* Navigate to the ``docker`` subdirectory and run the command ``docker build   -t $USER/dcs-world-dedicated-server  .``
+* Navigate to the ``docker`` subdirectory and run the command ``docker build -t $USER/dcs-world-dedicated-server .``
 * Take a note of the final line of this command's output e.g. :
 
         => => naming to docker.io/myusername/dcs-world-dedicated-server

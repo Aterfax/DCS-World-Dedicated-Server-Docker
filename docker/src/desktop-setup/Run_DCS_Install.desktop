@@ -1,10 +1,10 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=Run DCS Install
+Name=Run First DCS Install
 Comment=
-Exec=/app/dcs_server/wine-dedicated-dcs-automated-installer/dcs-dedicated-server-automatic-installer.sh
-Icon=E31E_unins000.0
-Path=
+Exec=bash dcs-dedicated-server-automatic-installer.sh
+Icon=/app/dcs_server/desktop-setup/package-upgrade.svg
+Path=/app/dcs_server/wine-dedicated-dcs-automated-installer/
 Terminal=true
 StartupNotify=false
