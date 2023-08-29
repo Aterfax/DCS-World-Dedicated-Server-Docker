@@ -37,7 +37,7 @@ jobs:
 
       - name: Get current date
         id: date
-        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+        run: echo "DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
 
       - name: Build image and push to Docker Hub and GitHub Container Registry
         uses: docker/build-push-action@v4
@@ -47,8 +47,8 @@ jobs:
           tags: |
             aterfax/dcs-world-dedicated-server:latest 
             ghcr.io/aterfax/dcs-world-dedicated-server:latest
-            aterfax/dcs-world-dedicated-server:${{ steps.date.outputs.date }}
-            ghcr.io/aterfax/dcs-world-dedicated-server:${{ steps.date.outputs.date }}
+            aterfax/dcs-world-dedicated-server:${{ env.DATE }}
+            ghcr.io/aterfax/dcs-world-dedicated-server:${{ env.DATE }}
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
