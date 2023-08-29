@@ -1,5 +1,35 @@
 #!/bin/bash
 
+# If we're conducting an automatic module install just do that. First check if it was called with args.
+if [ $# -gt 0 ]; then
+
+    # Parse the first argument (the action)
+    action="$1"
+
+    # Check if the action is either "install" or "uninstall"
+    if [ "$action" != "install" ] && [ "$action" != "uninstall" ]; then
+        echo "Invalid action. Use either 'install' or 'uninstall'."
+        exit 1
+    fi
+
+    # Shift the argument list to remove the first argument (action)
+    shift
+
+    # The remaining arguments are DCSMODULES
+    DCSMODULES="$@"
+
+    # Validate DCSMODULES using regex (alphanumeric, underscores, or spaces)
+    if ! [[ "$DCSMODULES" =~ ^[A-Za-z0-9_[:space:]]*$ ]]; then
+        echo "Invalid value for DCSMODULES. The list should be supplied as a whitespace separated list of modules as per https://forum.dcs.world/topic/324040-eagle-dynamics-modular-dedicated-server-installer/"
+        exit 1
+    fi
+
+    # Start automated install
+    wine '/config/.wine/drive_c/Program Files/Eagle Dynamics/DCS World OpenBeta Server/bin/DCS_updater.exe' ${action} ${DCSMODULES}
+
+    exit 0
+fi
+
 # Define the table of modules
 csv_data="
 Module name,ID
