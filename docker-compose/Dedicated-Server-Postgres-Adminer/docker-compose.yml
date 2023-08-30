@@ -1,6 +1,6 @@
 version: '3.3'
 services:
-  ptero-dcs-world-dedicated-server:
+  dcs-world-dedicated-server:
     container_name: dcs-world-dedicated-server
     environment:
       - PUID=$PUID
