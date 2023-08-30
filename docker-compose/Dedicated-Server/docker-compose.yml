@@ -10,9 +10,24 @@ services:
       - DCSAUTOINSTALL=${DCSAUTOINSTALL:-0}
       - DCSMODULES=${DCSMODULES:-}
     ports:
-      - '3000:3000'
-      - '3001:3001'
-      - '10308:10308'
+      # Webtop WebGUI ports    
+      - '3000:3000/tcp' # Webtop HTTP port - TCP only.
+      - '3001:3001/tcp' # Webtop HTTPs port - TCP only.
+
+      # DCS server Ports      
+      - '10308:10308/tcp' # Multiplayer game traffic - TCP.
+      - '10308:10308/udp' # Multiplayer game traffic - UDP.      
+      #- '10309:10309/tcp' # Multiplayer game VOIP traffic - TCP - Uncomment if in game VOIP is desired.
+      #- '10309:10309/udp' # Multiplayer game VOIP traffic - UDP - Uncomment if in game VOIP is desired.      
+      #- '8088:8088' # Uncomment to enable remote web control webGUI from the Eagle Dynamics website - TCP only.
+
+      # Tacview ports
+      #- '42674:42674/tcp' # Uncomment to enable TacView Real-time Telemetry if in use - TCP only.
+      #- '42675:42675/tcp' # Uncomment to enable TacView Remote Control if in use - TCP only.
+
+      # DCS SimpleRadio Standalone (DCS-SRS) ports
+      #- '5002:5002/tcp' # Uncomment to enable DCS SimpleRadio Standalone (DCS-SRS) - TCP and UDP.
+      #- '5002:5002/udp' # Uncomment to enable DCS SimpleRadio Standalone (DCS-SRS) - TCP and UDP.      
     volumes:
       - '${HOME}/dcs-world-dedicated-server:/config/'
     restart: always
