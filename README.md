@@ -20,6 +20,7 @@ Various automations and helper scripts are provided. In depth configuration and 
 
 - [Quickstart](#Quickstart)
 - [Configuration](#Configuration)
+- [FAQ](#FAQ)
 - [Troubleshooting](#Troubleshooting)
 - [Contributing](#Contributing)
 - [License](#License)
@@ -94,6 +95,28 @@ Or uninstalling the Mariana terrain:
 
 The list should be supplied as a whitespace separated list of modules as per https://forum.dcs.world/topic/324040-eagle-dynamics-modular-dedicated-server-installer/
 
+## FAQ
+
+### Which user am I within the container?
+
+As with most linuxserver.io images, in this container you will run things as the ``abc`` user. Note that the ``abc`` user's UID and GID will be those you specified within the ``docker-compose.yml`` file.
+
+### How do I change the ports or pass through more ports from the container?
+
+To change the ports passed through or add more, you need to edit the ports section in the ``docker-compose.yml`` file. The ports section defines the mapping between the ports on the host machine and the ports inside the container.
+
+The syntax for the ports section is:
+
+        ports:
+        - <host_port>:<container_port>
+
+Once you have edited the ports section, you need to rebuild and restart the containers using the ``docker-compose up -d`` command.
+
+Keep in mind when changing the port or passing through new ports:
+
+- If you are changing the port for the server you also need to update the firewall rules on your host machine / firewalls to allow traffic on the changed / new port as well as amending any port forwarding rules as needed.
+
+- Changing the ports for the Docker container will not change the ports any running DCS Server is using! You need to also change the DCS Server configuration and match the passed through ports if you use ports not already specified in the ``docker-compose.yml``.
 
 ## Troubleshooting
 
