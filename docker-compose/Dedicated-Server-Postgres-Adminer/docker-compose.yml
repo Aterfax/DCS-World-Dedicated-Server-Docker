@@ -2,6 +2,7 @@ version: '3.3'
 services:
   dcs-world-dedicated-server:
     container_name: dcs-world-dedicated-server
+    hostname: dcs-world-dedicated-server
     environment:
       - PUID=$PUID
       - PGID=$PGID
