@@ -59,31 +59,11 @@ if [ "$DCSAUTOINSTALL" -eq 1 ]; then
 fi
 
 # Start the installer
-wine /config/DCS_World_OpenBeta_Server_modular.exe &
-
-# Wait for it to fully open
-sleep 5
-
-# Now start the automated input process to install
-WID=$(xdotool search --name "Select Setup Language")
-xdotool windowactivate $WID key KP_Tab key KP_Enter
-sleep 1
-WID=$(xdotool search --name "Setup - DCS World OpenBeta Server" | tail -n 1)
-xdotool windowactivate --sync $WID keydown Tab keyup Tab keydown A keyup A key space key enter
-sleep 1
-xdotool windowactivate --sync $WID key enter
-sleep 1
-xdotool windowactivate --sync $WID key Down key enter
-sleep 1
-xdotool windowactivate --sync $WID key enter
-sleep 1
-xdotool windowactivate --sync $WID key enter
-sleep 5
-xdotool windowactivate --sync $WID key enter
-sleep 10
-xdotool windowactivate --sync $WID key Tab
-sleep 1
-xdotool windowactivate --sync $WID key enter
+cd /config && innoextract -e -m DCS_World_OpenBeta_Server_modular.exe
+mkdir -p "/config/.wine/drive_c/Program Files/Eagle Dynamics/DCS World OpenBeta Server"
+mv app/* "/config/.wine/drive_c/Program Files/Eagle Dynamics/DCS World OpenBeta Server/" && rmdir app
+cd "/config/.wine/drive_c/Program Files/Eagle Dynamics/DCS World OpenBeta Server/bin"
+wine DCS_updater.exe --quiet install WORLD
 
 # Remove broken shortcuts.
 rm /config/Desktop/Local\ Web\ GUI.desktop
@@ -119,43 +99,6 @@ create_desktop_shortcut "xdg-open '/config/.wine/drive_c/Program Files/Eagle Dyn
                         "folder-wine" \
                         "DCS Install Dir" \
                         "false"
-
-# Sleep for a bit to ensure the installer window is open.
-sleep 5
-
-window_ids=$(xdotool search --name "DCS Updater")
-
-# Check if the value of number of DCS Updater windows is equal to 3
-# 3 windows means the installation is waiting at the finished "Ok" prompt.
-wait_for_dcs_updater_windows 3
-
-all_window_ids=$(xdotool search --name "DCS Updater")
-
-# Get the odd window id out as this is our "Ok" window.
-ok_window_id=""
-
-# Split the variables into arrays
-IFS=' ' read -ra window_ids_array <<< "$window_ids"
-IFS=' ' read -ra all_window_ids_array <<< "$all_window_ids"
-
-for num in "${all_window_ids_array[@]}"; do
-    # Check if the number is not in window_ids_array
-    if [[ ! " ${window_ids_array[*]} " =~ " $num " ]]; then
-        ok_window_id="$num"
-        break
-    fi
-done
-
-# Hit the "Ok" prompt.
-xdotool windowactivate --sync $ok_window_id key Return Return
-
-# Wait a bit for all WINE gubbins to go away.
-sleep 5
-echo
-
-# Check if the value of number of DCS Updater windows is equal to 0
-# 0 windows = installion is complete.
-wait_for_dcs_updater_windows 0
 
 # Run the module installer
 if [ "$DCSAUTOINSTALL" -eq 1 ]; then
