@@ -118,6 +118,12 @@ Keep in mind when changing the port or passing through new ports:
 
 - Changing the ports for the Docker container will not change the ports any running DCS Server is using! You need to also change the DCS Server configuration and match the passed through ports if you use ports not already specified in the ``docker-compose.yml``.
 
+### "Failed to fdwalk: Operation not permitted" errors
+
+Setting seccomp to unconfined with security_opt is necessary if you encounter ``Failed to execute child process "bash": Failed to fdwalk: Operation not permitted`` errors.
+
+The example ``docker-compose.yml`` files include a commented out section to to this which you can uncomment. See also: https://docs.linuxserver.io/images/docker-webtop/#application-setup
+
 ## Troubleshooting
 
 If you encounter issues, check the [Troubleshooting section](TROUBLESHOOTING.md)  for solutions to common problems.
