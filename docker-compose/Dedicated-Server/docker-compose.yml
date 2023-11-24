@@ -31,5 +31,8 @@ services:
       #- '5002:5002/udp' # Uncomment to enable DCS SimpleRadio Standalone (DCS-SRS) - TCP and UDP.      
     volumes:
       - '${HOME}/dcs-world-dedicated-server:/config/'
+    security_opt:
+      #Security_opt is neccesary to prevent the 'Failed to execute child process "bash": Failed to fdwalk: Operation not permitted' error on attempting to launch any terminal applications within the image
+      - seccomp=unconfined
     restart: always
     image: aterfax/dcs-world-dedicated-server
