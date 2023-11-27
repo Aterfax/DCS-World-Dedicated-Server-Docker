@@ -12,7 +12,7 @@ services:
       - DCSMODULES=${DCSMODULES:-}
       - FORCEREINSTALL=${FORCEREINSTALL:-0}
       - AUTOSTART=${AUTOSTART:-0}
-      - TIMEOUT=${TIMEOUT:-0}
+      - TIMEOUT=${TIMEOUT:-30}
     ports:
       # Webtop WebGUI ports    
       - '3000:3000/tcp' # Webtop HTTP port - TCP only.
