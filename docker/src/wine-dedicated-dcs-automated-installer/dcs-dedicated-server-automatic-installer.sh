@@ -23,23 +23,6 @@ create_desktop_shortcut() {
     chmod +x "$desktop_file"
 }
 
-wait_for_dcs_updater_windows() {
-    local limit="$1"
-    
-    while true; do
-        # Run the command and store the output in the variable 'count'
-        count=$(xdotool search --name "DCS Updater" | wc -l)
-        
-        # Check if the value of 'count' is equal to the specified limit
-        if [ "$count" -eq "$limit" ]; then
-            break  # Exit the loop if the condition is met
-        fi
-        
-        # Wait for a few seconds before running the command again
-        sleep 5
-    done
-}
-
 # Read the autoinstaller environment variables
 DCSAUTOINSTALL="${DCSAUTOINSTALL:-0}"
 DCSMODULES="${DCSMODULES:-}"
@@ -101,11 +84,19 @@ create_desktop_shortcut "xdg-open '/config/.wine/drive_c/Program Files/Eagle Dyn
                         "false"
 
 # Run the module installer
-if [ "$DCSAUTOINSTALL" -eq 1 ]; then
+
+# Validate DCSMODULES using regex (alphanumeric, underscores, or spaces).
+# Works for installations or updates.
+if [[ "$DCSMODULES" =~ ^[A-Za-z0-9_[:space:]]*$ ]]; then
+    echo "Modules installation starting."
     /app/dcs_server/wine-dedicated-dcs-automated-installer/dcs-dedicated-server-module-installer.sh install "$DCSMODULES"
-else
-    /app/dcs_server/wine-dedicated-dcs-automated-installer/dcs-dedicated-server-module-installer.sh
+    echo
+    echo "Install complete."
+    exit 0
 fi
 
+echo "Manual installation, please select modules to install/"
+/app/dcs_server/wine-dedicated-dcs-automated-installer/dcs-dedicated-server-module-installer.sh
 echo
 echo "Install complete."
+exit 0

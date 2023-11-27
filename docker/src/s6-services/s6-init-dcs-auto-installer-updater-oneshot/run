@@ -1,0 +1,68 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash
+
+# Define a logging function to prefix output to the docker logs.
+output_to_log() {
+    sed  's/^/[s6-init-dcs-auto-installer-updater-oneshot] /'
+}
+
+# Set up error handling
+handle_error() {
+    local exit_code="$?"
+    echo -e "Error occurred (Exit code: $exit_code)"  | output_to_log
+    exit "$exit_code"
+}
+trap handle_error ERR
+
+# Function for autoinstall
+autoinstall() {
+    sudo -E -u abc /app/dcs_server/wine-dedicated-dcs-automated-installer/dcs-dedicated-server-automatic-installer.sh | output_to_log
+    exit 0
+}
+
+# Function for autoupdate
+autoupdate() {
+    # Believe it or not you can just call the same install command and it will update/validate/install.
+    autoinstall
+}
+
+install_folder_path="/config/.wine/drive_c/Program Files/Eagle Dynamics"
+
+# Get/set default value for DCSAUTOINSTALL if not already set
+DCSAUTOINSTALL="${DCSAUTOINSTALL:-0}"
+echo -e "DCSAUTOINSTALL=$DCSAUTOINSTALL" | output_to_log
+
+# Get/set default value for FORCEREINSTALL if not already set
+FORCEREINSTALL="${FORCEREINSTALL:-0}"
+echo -e "FORCEREINSTALL=$FORCEREINSTALL" | output_to_log
+
+# Check if DCSAUTOINSTALL is set to 1 and do so.
+if [ "$DCSAUTOINSTALL" -eq 1 ]; then
+    echo -e "DCS auto install requested." | output_to_log
+    if [ "$FORCEREINSTALL" -eq 1 ]; then
+        # A force reinstall request
+        echo -e "Force reinstall requested." | output_to_log
+        # If a previous install is present get rid of it.
+        if [ -d "$install_folder_path" ]; then
+            echo "Removing detected previous installation." | output_to_log
+            rm -rf "$install_folder_path"
+            find /config/Desktop/ -name '*.desktop' ! -name 'Run_DCS_Install.desktop' -delete
+            autoinstall
+        else
+            echo "No previous installation detected." | output_to_log
+            autoinstall
+        fi
+        exit 0
+    fi
+    # Not a force reinstall request
+    autoinstall
+    exit 0
+fi
+
+# If we get here then we must be updating
+autoupdate
+
+# We shouldn't be able to get here
+exit 0
+
+
