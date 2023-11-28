@@ -1,1 +1,1 @@
-bash /etc/s6-overlay/s6-rc.d/init-winepreqs-oneshot/run
+/etc/s6-overlay/s6-rc.d/init-winepreqs-oneshot/run

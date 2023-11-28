@@ -25,11 +25,14 @@ RUN touch etc/s6-overlay/s6-rc.d/user/contents.d/init-getlatest-dcs-installer-on
 COPY ./src/s6-services/s6-init-desktop-setup-oneshot /etc/s6-overlay/s6-rc.d/init-desktop-setup-oneshot
 RUN touch etc/s6-overlay/s6-rc.d/user/contents.d/init-desktop-setup-oneshot
 
-COPY ./src/xdotool-sequences /app/dcs_server/xdotool-sequences
-RUN chmod +x -R /app/dcs_server/xdotool-sequences
-
 COPY ./src/wine-dedicated-dcs-automated-installer /app/dcs_server/wine-dedicated-dcs-automated-installer
 RUN chmod +x -R /app/dcs_server/wine-dedicated-dcs-automated-installer
 
 COPY ./src/desktop-setup /app/dcs_server/desktop-setup
 RUN chmod +x -R /app/dcs_server/desktop-setup
+
+COPY ./src/s6-services/s6-init-dcs-auto-installer-updater-oneshot /etc/s6-overlay/s6-rc.d/init-dcs-auto-installer-updater-oneshot
+RUN touch etc/s6-overlay/s6-rc.d/user/contents.d/init-dcs-auto-installer-updater-oneshot
+
+COPY ./src/s6-services/s6-init-dcs-server-autostart-longrun /etc/s6-overlay/s6-rc.d/init-dcs-server-autostart-longrun
+RUN touch etc/s6-overlay/s6-rc.d/user/contents.d/init-dcs-server-autostart-longrun

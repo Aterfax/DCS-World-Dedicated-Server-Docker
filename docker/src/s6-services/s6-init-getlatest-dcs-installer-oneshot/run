@@ -1,4 +1,4 @@
-#!/usr/bin/with-contenv bash
+#!/usr/bin/env bash
 # shellcheck shell=bash
 
 # Define a logging function to prefix output to the docker logs.
@@ -47,12 +47,18 @@ DOWNLOAD_PATH="/config/DCS_World_OpenBeta_Server_modular.exe"
 MD5SUM=$(curl -s "https://www.digitalcombatsimulator.com/en/downloads/world/server_beta/" | grep -o 'MD5:</b> [a-f0-9]\+' | awk '{print $2}')
 DOWNLOADED_MD5SUM=$(md5sum "$DOWNLOAD_PATH" | awk '{print $1}')
 
-echo -e "Downloading DCS Server if required: " | output_to_log
+echo -e "Downloading DCS Server install executable if required: " | output_to_log
 # Check if the file exists and is older than 1 day then download.
 if [ "$DOWNLOADED_MD5SUM" == "$MD5SUM" ]; then
     echo -e "Already downloaded file matches the correct checksum. Download not needed. " | output_to_log
+    echo "Exiting" | output_to_log
     exit 0
 else
     download_dcs_server
+    echo "Exiting" | output_to_log
     exit 0
 fi
+
+# You should never get here.
+echo "Exiting" | output_to_log
+exit 0

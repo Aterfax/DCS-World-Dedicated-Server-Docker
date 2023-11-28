@@ -1,4 +1,4 @@
-#!/usr/bin/with-contenv bash
+#!/usr/bin/env bash
 # shellcheck shell=bash
 
 # Define a logging function to prefix output to the docker logs.
@@ -34,3 +34,5 @@ sudo -u abc /usr/bin/winetricks --unattended d3dcompiler_43 | output_to_log
 sudo -u abc /usr/bin/winetricks --unattended d3dx11_43 | output_to_log
 sudo -u abc /usr/bin/winetricks --unattended d3dcompiler_47 | output_to_log
 sudo -u abc /usr/bin/winetricks --unattended win10 | output_to_log
+echo "Exiting" | output_to_log
+exit 0

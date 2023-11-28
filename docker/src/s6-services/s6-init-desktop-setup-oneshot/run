@@ -1,4 +1,4 @@
-#!/usr/bin/with-contenv bash
+#!/usr/bin/env bash
 # shellcheck shell=bash
 
 # Define a logging function to prefix output to the docker logs.
@@ -41,3 +41,5 @@ lsiown -R abc:users /config/Desktop | output_to_log
 # copy_if_hash_differs SRC DEST
 copy_if_hash_differs "/app/dcs_server/desktop-setup/Run_DCS_Install.desktop" "/config/Desktop/Run_DCS_Install.desktop"
 
+echo "Exiting" | output_to_log
+exit 0
