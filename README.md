@@ -40,15 +40,14 @@ Various automations and helper scripts are provided. In depth configuration and 
 * Take a look at the [docker-compose/Dedicated-Server](docker-compose/Dedicated-Server/) folder and ``docker-compose.yml`` file. Make amendments as needed, taking care with the volume binds ensuring the chosen location has sufficient storage.
 * Copy and amend ``.env.example `` to ``.env`` as required. If you want to validate the correct settings are applied you can run ``docker compose config`` to display what Docker will use.
 * To start the container, navigate to the [docker-compose/Dedicated-Server](docker-compose/Dedicated-Server/) directory and then run the command ``docker compose up -d && docker logs -f dcs-world-dedicated-server``.
-* On first start the container will download and install the WINE prerequisites and modular Dedicated DCS server executable. You must wait until the installation of these prerequisites is finished, then open the WebGUI at the default port ``3000`` or your chosen port.
-* The installation of the modular DCS dedicated server is (presently) manually requested by the user. You can run the installer with the ``Run DCS Install`` desktop shortcut or open a terminal and run the command:
+* On first start, (if ``DCSAUTOINSTALL=1``,) the container will download and install the WINE prerequisites and modular Dedicated DCS server executable then begin installation of the DCS Server and your chosen terrain modules. You can open the WebGUI at the default port ``3000`` or your chosen port to observe this process.
+* If you wish to manually request installation, you can run the installer with the ``Run DCS Install`` desktop shortcut or by opening a terminal and running the command:
         
         /app/dcs_server/wine-dedicated-dcs-automated-installer/dcs-dedicated-server-automatic-installer.sh 
 
-* **Note:** If you have set the environment variables ``DCSAUTOINSTALL=1`` and given a valid ``DCSMODULES`` list in your docker compose ``.env`` file, the installer will be fully automated from this point. If you have not elected to set the above, the installer will first install the base server and then prompt you to interactively choose the modules to install. 
-* While installation is ongoing, you can use the webGUI session but must avoid clicking any of the DCS Updater or installation windows.
-* **Important:** On first run of the dedicated server, you will need to login, but the login window will be hidden behind the DCS splash screen (ED go figure... smh...). Right click on the Login window in the task bar and click "Move". You can now move it and make it visible for you to login to.
+  * **Note:** Even if you request a manual installation, if you have set the environment variables ``DCSAUTOINSTALL=1`` and given a valid ``DCSMODULES`` list in your docker compose ``.env`` file, the installer will be fully automated from this point. If you have not elected to set the above, the installer will first install the base server and then prompt you to interactively choose the terrain modules to install. 
 * Post server installation, various shortcuts will now also have been added to the desktop for opening the server WebGUI or running and updating the DCS server, installing or removing modules and opening DCS server related directories.
+* Once you have configured your DCS Server installation to your taste, you can set it to auto start by defining the environment variable ``AUTOSTART=1``.
 
 ### Using a self built image
 
@@ -71,11 +70,15 @@ Various automations and helper scripts are provided. In depth configuration and 
 
 ## Configuration
 
+### Common post installation configuration actions
+
 After installation is complete, you can configure your server as you would do so typically, editing configuration or adding missions etc... at to the following path (which you can also open from the ``DCS Saved Games Dir`` desktop shortcut):
 
     "/config/.wine/drive_c/users/abc/Saved Games/DCS.openbeta_server/"
 
 **Hint:** you can open the DCS WebGUI in the browser by using the ``Open DCS Server WebGUI`` desktop shortcut.
+
+**Hint:** you can set the DCS server to auto start by defining the environment variable ``AUTOSTART=1``.
 
 **Hint:** upload of files to the folder above can be done using the KASM menu's file manager as shown below.
 
@@ -94,6 +97,24 @@ Or uninstalling the Mariana terrain:
     /app/dcs_server/wine-dedicated-dcs-automated-installer/dcs-dedicated-server-module-installer.sh uninstall MARIANAISLANDS_terrain
 
 The list should be supplied as a whitespace separated list of modules as per https://forum.dcs.world/topic/324040-eagle-dynamics-modular-dedicated-server-installer/
+
+### Table of available container environment variables
+
+The following environment variables can be configured to customize the behavior of the Docker container:
+
+| Variable Name      | Default Docker Compose Value | Valid Values           | Description                                                                                                           |
+|--------------------|------------------------------|------------------------|-----------------------------------------------------------------------------------------------------------------------|
+| VNCPASSWORD        | `123123123`                  | Any string             | Set to the desired VNC password for accessing the containerized environment (e.g. `123123123`).                    |
+| PUID               | `1000`                       | Numeric value          | Specifies the user ID for the container (e.g. `1000`).                                                               |
+| PGID               | `1000`                       | Numeric value          | Specifies the group ID for the container (e.g. `1000`).                                                              |
+| TZ                 | `Etc/UTC`                    | Timezone string        | Sets the timezone for the container (e.g., `Etc/UTC`).                                                                |
+| DCSAUTOINSTALL     | `1`                          | `1` or `0`              | Controls automatic installation of the DCS server. Set to `1` for automatic installation, and `0` to disable auto-installation. |
+| DCSMODULES         | `"MARIANAISLANDS_terrain"`   | Whitespace-separated list | Specifies DCS modules to be installed. Refer to [Eagle Dynamics Modular Dedicated Server Installer](https://forum.dcs.world/topic/324040-eagle-dynamics-modular-dedicated-server-installer/) for module names. Example: `MARIANAISLANDS_terrain`. |
+| FORCEREINSTALL     | `0`                          | `1` or `0`              | Controls whether the installer will forcefully remove existing installations during (re)installation of the DCS server. Set to `1` for forceful reinstall, and `0` to disable forceful reinstall. |
+| AUTOSTART          | `0`                          | `1` or `0`              | Controls whether the DCS Server will automatically start. Set to `1` for automatic startup, and `0` to disable automatic startup. |
+| TIMEOUT            | `60`                         | Numeric value (whole number) | Specifies the interval in seconds between various "liveness" checks (e.g. `60` seconds).                               |
+
+Further valid environment variables for the image this project is built on can be found at the [linuxserver/webtop image](https://docs.linuxserver.io/images/docker-webtop) documentation page.
 
 ## FAQ
 

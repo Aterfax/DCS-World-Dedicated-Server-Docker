@@ -55,6 +55,7 @@ if [ "$DCSAUTOINSTALL" -eq 1 ]; then
         exit 0
     fi
     # Not a force reinstall request
+    # We could block this but it will only actually run an update so meh.
     autoinstall
     exit 0
 fi
