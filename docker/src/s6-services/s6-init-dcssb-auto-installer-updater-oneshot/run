@@ -1,0 +1,125 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash
+
+handle_error() {
+    local exit_code="$?"
+    echo -e "Error occurred (Exit code: $exit_code)"
+    exit "$exit_code"
+}
+trap handle_error ERR
+
+# Define a logging function to prefix output to the docker logs.
+output_to_log() {
+    sed 's/^/[s6-init-dcssb-auto-installer-updater-oneshot] /'
+}
+
+# Redirect all subsequent output to the logging function
+exec 3>&1
+exec > >(output_to_log)
+
+# Optionally, you can restore the original output after the script is done
+# exec 1>&3
+
+# Check if DCSSBAUTOINSTALL environment variable is set to 1
+if [ "${DCSSBAUTOINSTALL}" != "1" ]; then
+    echo "DCSSBAUTOINSTALL is not set to 1. Exiting."
+    exit 0
+fi
+
+# Set the directory path
+repo_dir="/config/DCSServerBot"
+
+# Set the Git repository URL
+repo_url="https://github.com/Special-K-s-Flightsim-Bots/DCSServerBot.git"
+
+# Needed to export into the EOF subshell.
+export repo_dir
+export repo_url
+
+if [ -d "$repo_dir" ]; then
+    # Ensure that the repo folder is owned by the user from the container.
+    lsiown -R abc:users $repo_dir
+fi
+
+# Note single quotes 'EOF' to prevent variable expansion.
+sudo -E -u abc bash <<'EOF'
+
+# Function to clone Git repository
+clone_git_repo() {
+    local repo_url="$1"
+    local repo_dir="$2"
+
+    echo "Cloning Git repository to $repo_dir..."
+    git clone "$repo_url" "$repo_dir"
+}
+
+# Check if the directory exists
+if [ -d "$repo_dir" ]; then
+
+    # Check if it's a Git repository
+    # Change to the directory
+    cd "$repo_dir" || exit 1
+
+    # Check if it's a Git repository
+    if git rev-parse --git-dir > /dev/null 2>&1; then
+        # It's a Git repository, check if it matches the specified URL
+        remote_url=$(git config --get remote.origin.url)
+
+        if [ "$remote_url" == "$repo_url" ]; then
+            # It's the correct Git repository, pull the latest changes
+            echo "Correct Git repository found. Pulling the latest changes..."
+            git pull
+        else
+            # It's not the correct Git repository, show an error message
+            echo "Error: The existing Git repository does not match the specified URL."
+            echo "Exiting."
+            exit 1
+        fi
+    else
+        # It's not a Git repository, check if it's empty
+        if [ -z "$(ls -A)" ]; then
+            # It's an empty directory, call the function to clone the Git repository
+            clone_git_repo "$repo_url" "$repo_dir"
+        else
+            # It's not an empty directory, show an error message
+            echo "Error: The directory exists but is not a Git repository, and it is not empty."
+            echo "Exiting."
+            exit 1
+        fi
+    fi
+else
+    # Directory doesn't exist, call the function to clone the Git repository
+    echo "Installing DCSSB."
+    clone_git_repo "$repo_url" "$repo_dir"
+fi
+
+# Now add the pip environment creation / update
+cd "$repo_dir"
+
+venv_name="dcssb-venv"
+requirements_file="$repo_dir/requirements.txt"
+
+# Check if the virtual environment already exists
+if [ ! -d "$venv_name" ]; then
+    echo "Creating virtual environment '$venv_name'..."
+    
+    # Create a virtual environment named 'dcssb'
+    python -m venv "$venv_name"
+
+    # Activate the virtual environment
+    source "$venv_name/bin/activate"
+else
+    echo "Virtual environment '$venv_name' already exists. Updating requirements..."
+    
+    # Activate the existing virtual environment
+    source "$venv_name/bin/activate"
+fi
+
+# Install or update requirements from requirements.txt
+pip install -U -r "$requirements_file"
+pip install --upgrade pip
+
+echo "DCSSB python virtual environment '$venv_name' updated with requirements."
+EOF
+
+exit 0

@@ -1,0 +1,58 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash
+
+handle_error() {
+    local exit_code="$?"
+    echo -e "Error occurred (Exit code: $exit_code)"
+    exit "$exit_code"
+}
+trap handle_error ERR
+
+# Define a logging function to prefix output to the docker logs.
+output_to_log() {
+    sed 's/^/[s6-init-dcssb-auto-start-longrun] /'
+}
+
+# Redirect all subsequent output to the logging function
+exec 3>&1
+exec > >(output_to_log)
+
+# Optionally, you can restore the original output after the script is done
+# exec 1>&3
+
+# Check if DCSSBAUTOINSTALL environment variable is set to 1
+if [ "${DCSSBAUTOSTART}" != "1" ]; then
+    echo "DCSSBAUTOSTART is not set to 1. Exiting."
+    exit 0
+fi
+
+# Set the directory path
+repo_dir="/config/DCSServerBot"
+
+while true; do
+startup_iterator=1
+pid=""
+    if [ $startup_iterator -eq 1 ]; then
+        echo "Starting DCSSB Server"
+        sudo -E -u abc bash -c 'source "/config/DCSServerBot/dcssb-venv/bin/activate" && python run.py && deactivate' &
+        pid=$! # This grabs the PID of the running DCSSB process and keeps it for later if needed.
+        echo "Server PID="$pid
+        startup_iterator=0
+        #echo "Sleeping: $TIMEOUT"
+        sleep $TIMEOUT
+    fi
+
+    while true; do
+        # Check if the service is still alive.
+        if ps -p "$pid" > /dev/null; then
+            echo "############### Server still running. ###############" $(date +"%d-%m-%y-%T")
+            #echo "Sleeping: $TIMEOUT"
+            sleep $TIMEOUT
+        else
+            startup_iterator=1
+            restarts=$((restarts + 1))
+            break # Restart server
+        fi
+    done
+done
+

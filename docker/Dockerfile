@@ -7,7 +7,7 @@ FROM lscr.io/linuxserver/webtop:latest
 LABEL maintainer="Aterfax"
 
 # Wine 64Bit for running EXE
-RUN apk add --no-cache wine freetype wget cabextract xdotool xvfb xvfb-run git python3 python3-dev py3-pip 7zip make cmake gcc g++ gfortran innoextract
+RUN apk add --no-cache wine freetype wget cabextract xdotool xvfb xvfb-run git python3 python3-dev py3-pip 7zip make cmake gcc g++ gfortran innoextract build-base linux-headers
 
 # Download the latest winetricks script (master="latest version") from Github.
 RUN wget https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks && chmod +x winetricks
@@ -15,6 +15,9 @@ RUN mv winetricks /usr/bin
 
 RUN mkdir /config/.wine && chown abc:users -R /config/.wine
 RUN mkdir /config/.cache && chown abc:users -R /config/.cache
+
+RUN sed -i 's|cat /etc/s6-overlay/s6-rc.d/init-adduser/branding|cat /etc/s6-overlay/s6-rc.d/init-adduser/branding2|' /etc/s6-overlay/s6-rc.d/init-adduser/run
+COPY ./src/s6-services/branding2 /etc/s6-overlay/s6-rc.d/init-adduser/
 
 COPY ./src/s6-services/s6-init-winepreqs-oneshot /etc/s6-overlay/s6-rc.d/init-winepreqs-oneshot
 RUN touch etc/s6-overlay/s6-rc.d/user/contents.d/init-winepreqs-oneshot
@@ -34,5 +37,11 @@ RUN chmod +x -R /app/dcs_server/desktop-setup
 COPY ./src/s6-services/s6-init-dcs-auto-installer-updater-oneshot /etc/s6-overlay/s6-rc.d/init-dcs-auto-installer-updater-oneshot
 RUN touch etc/s6-overlay/s6-rc.d/user/contents.d/init-dcs-auto-installer-updater-oneshot
 
+COPY ./src/s6-services/s6-init-dcssb-auto-installer-updater-oneshot /etc/s6-overlay/s6-rc.d/init-dcssb-auto-installer-updater-oneshot
+RUN touch etc/s6-overlay/s6-rc.d/user/contents.d/init-dcssb-auto-installer-updater-oneshot
+
 COPY ./src/s6-services/s6-init-dcs-server-autostart-longrun /etc/s6-overlay/s6-rc.d/init-dcs-server-autostart-longrun
 RUN touch etc/s6-overlay/s6-rc.d/user/contents.d/init-dcs-server-autostart-longrun
+
+COPY ./src/s6-services/s6-init-dcssb-auto-start-longrun /etc/s6-overlay/s6-rc.d/init-dcssb-auto-start-longrun
+RUN touch etc/s6-overlay/s6-rc.d/user/contents.d/init-dcssb-auto-start-longrun

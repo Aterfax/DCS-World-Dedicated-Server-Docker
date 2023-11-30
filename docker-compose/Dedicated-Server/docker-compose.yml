@@ -13,6 +13,8 @@ services:
       - FORCEREINSTALL=${FORCEREINSTALL:-0}
       - AUTOSTART=${AUTOSTART:-0}
       - TIMEOUT=${TIMEOUT:-30}
+      - DCSSBAUTOINSTALL=${DCSSBAUTOINSTALL:-0}
+      - DCSSBAUTOSTART=${DCSSBAUTOSTART:-0}
     ports:
       # Webtop WebGUI ports    
       - '3000:3000/tcp' # Webtop HTTP port - TCP only.
@@ -40,4 +42,4 @@ services:
     #security_opt:
       #- seccomp=unconfined
     restart: always
-    image: aterfax/dcs-world-dedicated-server
+    image: docker.io/aterfax/dcs-world-dedicated-server
