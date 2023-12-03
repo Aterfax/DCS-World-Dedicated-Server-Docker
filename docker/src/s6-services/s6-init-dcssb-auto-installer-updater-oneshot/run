@@ -93,33 +93,48 @@ else
     clone_git_repo "$repo_url" "$repo_dir"
 fi
 
-# Now add the pip environment creation / update
-cd "$repo_dir"
+# Now ensure that Python is installed.
 
-venv_name="dcssb-venv"
-requirements_file="$repo_dir/requirements.txt"
+download_python() {
+    local MAX_RETRIES=3
+    local RETRY_COUNT=0
+    local URL="https://www.python.org/ftp/python/3.11.6/python-3.11.6-amd64.exe"
+    local DOWNLOAD_PATH="/config/python-3.11.6-amd64.exe"
+    local MD5SUM="4a501c073d0d688c033d43f85e22d77e"
+    local INSTALL_PATH="/config/.wine/drive_c/users/abc/AppData/Local/Programs/Python/Python311/"
 
-# Check if the virtual environment already exists
-if [ ! -d "$venv_name" ]; then
-    echo "Creating virtual environment '$venv_name'..."
-    
-    # Create a virtual environment named 'dcssb'
-    python -m venv "$venv_name"
+    # Check if the installation directory exists
+    if [ ! -d "$INSTALL_PATH" ]; then
+        while [ "$RETRY_COUNT" -lt "$MAX_RETRIES" ]; do
+            echo -e "Python installation not found. Downloading..."
+            wget --progress=bar:force -O "$DOWNLOAD_PATH" "$URL" || true
+            DOWNLOADED_MD5SUM=$(md5sum "$DOWNLOAD_PATH" | awk '{print $1}')
+            
+            # Check if the MD5 checksum matches
+            if [ "$DOWNLOADED_MD5SUM" == "$MD5SUM" ]; then
+                echo -e "Download successful. MD5 checksum matches."
+                # Invoke the installer with Wine
+                wine "$DOWNLOAD_PATH" /quiet InstallAllUsers=0 PrependPath=1 Include_test=0
+                break
+            else
+                echo -e "Download failed. MD5 checksum does not match. Retrying in 5 seconds..."
+                RETRY_COUNT=$((RETRY_COUNT + 1))
+                sleep 5
+            fi
+        done
 
-    # Activate the virtual environment
-    source "$venv_name/bin/activate"
-else
-    echo "Virtual environment '$venv_name' already exists. Updating requirements..."
-    
-    # Activate the existing virtual environment
-    source "$venv_name/bin/activate"
-fi
+        if [ "$RETRY_COUNT" -ge "$MAX_RETRIES" ]; then
+            echo -e "Download retry count exceeded. Downloading failed."
+        fi
+    else
+        echo -e "Python is already installed at: $INSTALL_PATH"
+    fi
+}
 
-# Install or update requirements from requirements.txt
-pip install -U -r "$requirements_file"
-pip install --upgrade pip
+# Call the function
+download_python
 
-echo "DCSSB python virtual environment '$venv_name' updated with requirements."
+
 EOF
 
 exit 0
