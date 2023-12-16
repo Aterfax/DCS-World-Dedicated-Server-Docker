@@ -18,6 +18,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Force permissions fix.
+        run: cd ./docker && ./dos2unix.sh
+
       - name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@v3
