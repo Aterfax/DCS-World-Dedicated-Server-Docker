@@ -60,9 +60,13 @@ if [ "$DCSAUTOINSTALL" -eq 1 ]; then
 fi
 
 # If we get here then we must be updating
-autoupdate
+if [ "$DCSAUTOINSTALL" -eq 1 ]; then
+    autoupdate
+    exit 0
+fi
 
-# We shouldn't be able to get here
+# We shouldn't really get here
+echo "Nothing further to do, exiting." | output_to_log
 exit 0
 
 
