@@ -42,7 +42,7 @@ if [ "$DCSAUTOINSTALL" -eq 1 ]; then
 fi
 
 # Start the installer
-cd /config && innoextract -e -m DCS_World_OpenBeta_Server_modular.exe
+cd /config && innoextract -e -m DCS_World_Server_modular.exe
 mkdir -p "/config/.wine/drive_c/Program Files/Eagle Dynamics/DCS World OpenBeta Server"
 mv app/* "/config/.wine/drive_c/Program Files/Eagle Dynamics/DCS World OpenBeta Server/" && rmdir app
 cd "/config/.wine/drive_c/Program Files/Eagle Dynamics/DCS World OpenBeta Server/bin"
