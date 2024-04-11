@@ -18,7 +18,7 @@ trap handle_error ERR
 AUTOSTART="${AUTOSTART:-0}"
 TIMEOUT="${TIMEOUT:-30}"
 
-network_vault_path="/config/.wine/drive_c/users/abc/Saved Games/DCS.openbeta_server/Config/network.vault"
+network_vault_path="/config/.wine/drive_c/users/abc/Saved Games/DCS.release_server/Config/network.vault"
 if [ ! -f "$network_vault_path" ]; then
     echo "Error: File '$network_vault_path' does not exist. Cannot autostart without user logging in and saving credentials for autologin. Exiting." | output_to_log
     sleep $TIMEOUT
