@@ -18,6 +18,12 @@ trap handle_error ERR
 AUTOSTART="${AUTOSTART:-0}"
 TIMEOUT="${TIMEOUT:-30}"
 
+if [ "$AUTOSTART" -ne 1 ]; then
+    echo "Error: AUTOSTART is not set to 1. Server will not autostart. Exiting." | output_to_log
+    sleep $TIMEOUT
+    exit 1
+fi
+
 network_vault_path="/config/.wine/drive_c/users/abc/Saved Games/DCS.openbeta_server/Config/network.vault"
 if [ ! -f "$network_vault_path" ]; then
     echo "Error: File '$network_vault_path' does not exist. Cannot autostart without user logging in and saving credentials for autologin. Exiting." | output_to_log
@@ -31,13 +37,6 @@ if [ ! -d "$install_folder_path" ]; then
     sleep $TIMEOUT
     exit 1
 fi
-
-if [ "$AUTOSTART" -ne 1 ]; then
-    echo "Error: AUTOSTART is not set to 1. Server will not autostart. Exiting." | output_to_log
-    sleep $TIMEOUT
-    exit 1
-fi
-
 
 while true; do
 startup_iterator=1
