@@ -15,4 +15,3 @@ output_to_log() {
 exec 3>&1  # Save original stdout to file descriptor 3
 exec 2>&1  # Redirect stderr to stdout
 exec > >(output_to_log)  # Redirect stdout to output_to_log
-
