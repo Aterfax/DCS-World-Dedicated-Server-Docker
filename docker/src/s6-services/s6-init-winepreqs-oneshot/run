@@ -1,15 +1,14 @@
 #!/usr/bin/env bash
 # shellcheck shell=bash
 
-# Define a logging function to prefix output to the docker logs.
-output_to_log() {
-    sed  's/^/[s6-init-winepreqs-oneshot] /'
-}
+# Source the log helper after setting the prefix
+log_prefix="s6-init-winepreqs-oneshot"
+source /app/dcs_server/logger_function
 
 # Set up error handling
 handle_error() {
     local exit_code="$?"
-    echo -e "Error occurred (Exit code: $exit_code)"  | output_to_log
+    echo -e "Error occurred (Exit code: $exit_code)"  
     exit "$exit_code"
 }
 trap handle_error ERR
@@ -17,22 +16,20 @@ trap handle_error ERR
 # Enable immediate exit on error
 set -e
 
-cat /etc/s6-overlay/s6-rc.d/init-winepreqs-oneshot/branding
-
 # Wait for volumes to be fully mounted.
 sleep 5
 
 # Ensure that the wine prefix is owned by the user from the container.
-lsiown -R abc:users /config/.wine | output_to_log
-lsiown -R abc:users /config/.cache | output_to_log
+lsiown -R abc:users /config/.wine 
+lsiown -R abc:users /config/.cache 
 
 sudo -u abc winecfg
 
 # Install the wine dependencies.
 # Note that this will not reinstall the dependencies if they are already installed.
-sudo -u abc /usr/bin/winetricks --unattended d3dcompiler_43 | output_to_log
-sudo -u abc /usr/bin/winetricks --unattended d3dx11_43 | output_to_log
-sudo -u abc /usr/bin/winetricks --unattended d3dcompiler_47 | output_to_log
-sudo -u abc /usr/bin/winetricks --unattended win10 | output_to_log
-echo "Exiting" | output_to_log
+sudo -u abc /usr/bin/winetricks --unattended d3dcompiler_43 
+sudo -u abc /usr/bin/winetricks --unattended d3dx11_43 
+sudo -u abc /usr/bin/winetricks --unattended d3dcompiler_47 
+sudo -u abc /usr/bin/winetricks --unattended win10 
+echo "Exiting" 
 exit 0
