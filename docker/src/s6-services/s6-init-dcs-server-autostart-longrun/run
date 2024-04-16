@@ -13,6 +13,14 @@ handle_error() {
 }
 trap handle_error ERR
 
+# Source DCS Dirs finder helper
+# This sets the following variables:
+# DCS_saved_games_dir_open_beta
+# DCS_saved_games_dir_release
+# DCS_install_dir_openbeta
+# DCS_install_dir_release
+source /app/dcs_server/find_dcs_dirs_function
+
 # Get / set timeout value for server check interval.
 AUTOSTART="${AUTOSTART:-0}"
 TIMEOUT="${TIMEOUT:-30}"
@@ -23,7 +31,7 @@ if [ "$AUTOSTART" -ne 1 ]; then
     exit 1
 fi
 
-network_vault_path="/config/.wine/drive_c/users/abc/Saved Games/DCS.openbeta_server/Config/network.vault"
+network_vault_path="${DCS_saved_games_dir_release}/Config/network.vault"
 if [ ! -f "$network_vault_path" ]; then
     echo "Error: File '$network_vault_path' does not exist. Cannot autostart without user logging in and saving credentials for autologin. Exiting." 
     sleep $TIMEOUT
@@ -42,7 +50,7 @@ startup_iterator=1
 pid=""
     if [ $startup_iterator -eq 1 ]; then
         echo "Starting DCS Server" 
-        sudo -E -u abc wine '/config/.wine/drive_c/Program Files/Eagle Dynamics/DCS World OpenBeta Server/bin/DCS_server.exe' &
+        sudo -E -u abc wine "${DCS_install_dir_release}/bin/DCS_server.exe" &
         pid=$! # This grabs the PID of the running Sneaker process and keeps it for later if needed.
         echo "Server PID="$pid 
         startup_iterator=0

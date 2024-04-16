@@ -1,6 +1,14 @@
 #!/bin/bash
 # shellcheck shell=bash
 
+# Source DCS Dirs finder helper
+# This sets the following variables:
+# DCS_saved_games_dir_open_beta
+# DCS_saved_games_dir_release
+# DCS_install_dir_openbeta
+# DCS_install_dir_release
+source /app/dcs_server/find_dcs_dirs_function
+
 create_desktop_shortcut() {
     target_executable="$1"
     icon_path="$2"
@@ -43,9 +51,9 @@ fi
 
 # Start the installer
 cd /config && innoextract -e -m DCS_World_Server_modular.exe
-mkdir -p "/config/.wine/drive_c/Program Files/Eagle Dynamics/DCS World OpenBeta Server"
-mv app/* "/config/.wine/drive_c/Program Files/Eagle Dynamics/DCS World OpenBeta Server/" && rmdir app
-cd "/config/.wine/drive_c/Program Files/Eagle Dynamics/DCS World OpenBeta Server/bin"
+mkdir -p "${DCS_install_dir_release}"
+mv app/* "${DCS_install_dir_release}/" && rmdir app
+cd "${DCS_install_dir_release}/bin"
 wine DCS_updater.exe --quiet install WORLD
 
 # Remove broken shortcuts.
@@ -53,32 +61,32 @@ rm /config/Desktop/Local\ Web\ GUI.desktop
 rm /config/Desktop/DCS\ World\ OpenBeta\ Server.desktop
 
 # Create working shortcuts.
-create_desktop_shortcut "wine '/config/.wine/drive_c/Program Files/Eagle Dynamics/DCS World OpenBeta Server/bin/DCS_updater.exe'" \
-                        "/config/.wine/drive_c/Program Files/Eagle Dynamics/DCS World OpenBeta Server/FUI/DCS-1.ico" \
+create_desktop_shortcut "wine \"${DCS_install_dir_release}/bin/DCS_updater.exe\"" \
+                        "${DCS_install_dir_release}/FUI/DCS-1.ico" \
                         "Run DCS Updater" \
                         "false"
 
-create_desktop_shortcut "wine '/config/.wine/drive_c/Program Files/Eagle Dynamics/DCS World OpenBeta Server/bin/DCS_server.exe'" \
-                        "/config/.wine/drive_c/Program Files/Eagle Dynamics/DCS World OpenBeta Server/FUI/DCS-1.ico" \
+create_desktop_shortcut "wine \"${DCS_install_dir_release}/bin/DCS_server.exe\"" \
+                        "${DCS_install_dir_release}/FUI/DCS-1.ico" \
                         "Run DCS Server" \
                         "false"
 
-create_desktop_shortcut "xdg-open '/config/.wine/drive_c/Program Files/Eagle Dynamics/DCS World OpenBeta Server/WebGUI/index.html'"\
-                        "/config/.wine/drive_c/Program Files/Eagle Dynamics/DCS World OpenBeta Server/FUI/DCS-1.ico" \
+create_desktop_shortcut "xdg-open \"${DCS_install_dir_release}/WebGUI/index.html\""\
+                        "${DCS_install_dir_release}/FUI/DCS-1.ico" \
                         "Open DCS Server WebGUI" \
                         "false"
 
 create_desktop_shortcut "/app/dcs_server/wine-dedicated-dcs-automated-installer/dcs-dedicated-server-module-installer.sh"\
-                        "/config/.wine/drive_c/Program Files/Eagle Dynamics/DCS World OpenBeta Server/FUI/DCS-1.ico" \
+                        "${DCS_install_dir_release}/FUI/DCS-1.ico" \
                         "Run DCS Module Installer" \
                         "true"
 
-create_desktop_shortcut "xdg-open '/config/.wine/drive_c/users/abc/Saved Games/DCS.openbeta_server/'"\
+create_desktop_shortcut "xdg-open \"${DCS_saved_games_dir_release}/\""\
                         "folder-wine" \
                         "DCS Saved Games Dir" \
                         "false"
 
-create_desktop_shortcut "xdg-open '/config/.wine/drive_c/Program Files/Eagle Dynamics/DCS World OpenBeta Server/'"\
+create_desktop_shortcut "xdg-open \"${DCS_install_dir_release}/\""\
                         "folder-wine" \
                         "DCS Install Dir" \
                         "false"

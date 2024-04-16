@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+# shellcheck shell=bash
+#
+# Note - when Eagle Dynamics update the DCS server from Open Beta to no more Open Beta paths changed
+# as follows -
+#
+# Saved Games dirs
+# From: "/config/.wine/drive_c/users/abc/Saved Games/DCS.openbeta_server"
+# To: "/config/.wine/drive_c/users/abc/Saved Games/DCS.release_server/"
+#
+# Installation folder
+# From: "/config/.wine/drive_c/Program Files/Eagle Dynamics/DCS World OpenBeta Server"
+# To: "/config/.wine/drive_c/Program Files/Eagle Dynamics/DCS World Server"
+#
+# This script will parse and check if these folders exist and flag as such by settings variables.
+
+# Paths to check
+DCS_saved_games_dir_open_beta="/config/.wine/drive_c/users/abc/Saved Games/DCS.openbeta_server"
+DCS_saved_games_dir_release="/config/.wine/drive_c/users/abc/Saved Games/DCS.release_server"
+DCS_install_dir_openbeta="/config/.wine/drive_c/Program Files/Eagle Dynamics/DCS World OpenBeta Server"
+DCS_install_dir_release="/config/.wine/drive_c/Program Files/Eagle Dynamics/DCS World Server"
+
+# Check if Saved Games directories exist
+if [[ -d "$DCS_saved_games_dir_open_beta" ]]; then
+    DCS_saved_games_dir_open_beta_presence_boolean=true
+else
+    DCS_saved_games_dir_open_beta_presence_boolean=false
+fi
+
+if [[ -d "$DCS_saved_games_dir_release" ]]; then
+    DCS_saved_games_dir_release_presence_boolean=true
+else
+    DCS_saved_games_dir_release_presence_boolean=false
+fi
+
+# Check if Installation folders exist
+if [[ -d "$DCS_install_dir_openbeta" ]]; then
+    DCS_install_dir_openbeta_presence_boolean=true
+else
+    DCS_install_dir_openbeta_presence_boolean=false
+fi
+
+if [[ -d "$DCS_install_dir_release" ]]; then
+    DCS_install_dir_release_presence_boolean=true
+else
+    DCS_install_dir_release_presence_boolean=false
+fi
+
+# Log the results to stdout
+#echo "DCS Server OpenBeta Saved Games directory exists:" $DCS_saved_games_dir_open_beta_presence_boolean
+#echo "DCS Server Release Saved Games directory exists:" $DCS_saved_games_dir_release_presence_boolean
+#echo "DCS Server OpenBeta Installation folder exists:" $DCS_install_dir_openbeta_presence_boolean
+#echo "DCS Server Release Installation folder exists:" $DCS_install_dir_release_presence_boolean

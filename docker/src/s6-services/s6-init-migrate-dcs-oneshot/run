@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+# shellcheck shell=bash
+
+# Source the log helper after setting the prefix
+log_prefix="s6-init-migrate-dcs-oneshot"
+source /app/dcs_server/logger_function
+
+# Set up error handling
+handle_error() {
+    local exit_code="$?"
+    echo -e "Error occurred (Exit code: $exit_code)" 
+    exit "$exit_code"
+}
+trap handle_error ERR
+
+# Source DCS Dirs finder helper
+# This sets the following variables:
+# DCS_saved_games_dir_open_beta
+# DCS_saved_games_dir_release
+# DCS_install_dir_openbeta
+# DCS_install_dir_release
+source /app/dcs_server/find_dcs_dirs_function
+
+# This will correct any desktop links to use the newer "Release" directory path.
+if [ -d "/config/Desktop" ]; then
+    find /config/Desktop/ -name '*.desktop' -exec sed -i 's|/config/.wine/drive_c/Program Files/Eagle Dynamics/DCS World OpenBeta Server|/config/.wine/drive_c/Program Files/Eagle Dynamics/DCS World Server|g' {} +
+    find /config/Desktop/ -name '*.desktop' -exec sed -i 's|/config/.wine/drive_c/users/abc/Saved Games/DCS.openbeta_server|/config/.wine/drive_c/users/abc/Saved Games/DCS.release_server|g' {} +
+fi
+
+if [[ "$DCS_saved_games_dir_open_beta_presence_boolean" == true  ]]; then
+    if [[ "$DCS_saved_games_dir_release_presence_boolean" == false  ]]; then
+        echo "'Open Beta' saved games folder detected with no 'Release' saved game folder. Moving 'Open Beta' saved game folder to 'Release' saved games folder path."
+        echo "${DCS_saved_games_dir_open_beta} ---> ${DCS_saved_games_dir_release}"
+        sudo -E -u abc mkdir -p "${DCS_saved_games_dir_release}"
+        mv "${DCS_saved_games_dir_open_beta}"/* "${DCS_saved_games_dir_release}"/
+        rmdir "${DCS_saved_games_dir_open_beta}"
+        echo "Folder move complete."
+    fi
+    if [[ "$DCS_saved_games_dir_release_presence_boolean" == true  ]]; then
+        echo "'Open Beta' saved games and 'Release' saved games folder detected together. User intervention required."
+        echo "Please ensure you move your older 'Open Beta' saved games folder to the newer 'Release' folder: ${DCS_saved_games_dir_release}"
+        echo "Please check why the newer 'Release' folder exists at the same time as the old 'Open Beta' before blindly overwriting!"
+        exit 1
+    fi
+fi
+
+if [[ "$DCS_install_dir_openbeta_presence_boolean" == true ]]; then
+    if [[ "$DCS_install_dir_release_presence_boolean" == false ]]; then
+        echo "'Open Beta' installation folder detected with no 'Release' installation folder. Moving 'Open Beta' installation folder to 'Release' installation folder path."
+        echo "${DCS_install_dir_openbeta} ---> ${DCS_install_dir_release}"
+        sudo -E -u abc mkdir -p "${DCS_install_dir_release}"
+        mv "${DCS_install_dir_openbeta}"/* "${DCS_install_dir_release}"/
+        rmdir "${DCS_install_dir_openbeta}"
+        echo "Folder move complete."
+    fi
+    if [[ "$DCS_install_dir_release_presence_boolean" == true ]]; then
+        echo "'Open Beta' installation and 'Release' installation folder detected together. User intervention required."
+        echo "Please ensure you move your older 'Open Beta' installation to the newer 'Release' folder: ${DCS_install_dir_release}"
+        echo "Please check why the newer 'Release' folder exists at the same time as the old 'Open Beta' before blindly overwriting!"
+        exit 1
+    fi
+fi
+
+if [[ "$DCS_saved_games_dir_open_beta_presence_boolean" == false && \
+      "$DCS_saved_games_dir_release_presence_boolean" == false && \
+      "$DCS_install_dir_openbeta_presence_boolean" == false && \
+      "$DCS_install_dir_release_presence_boolean" == false ]]; then
+    echo "No installations or saved games folders detected."
+    echo "We are probably installing."
+    echo "Exiting"
+fi
+exit 0

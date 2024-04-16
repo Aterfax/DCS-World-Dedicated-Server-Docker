@@ -16,6 +16,9 @@ RUN mv winetricks /usr/bin
 RUN mkdir /config/.wine && chown abc:users -R /config/.wine
 RUN mkdir /config/.cache && chown abc:users -R /config/.cache
 
+COPY ./src/s6-services/s6-init-migrate-dcs-oneshot /etc/s6-overlay/s6-rc.d/init-migrate-dcs-oneshot
+RUN touch etc/s6-overlay/s6-rc.d/user/contents.d/init-migrate-dcs-oneshot
+
 COPY ./src/s6-services/s6-init-winepreqs-oneshot /etc/s6-overlay/s6-rc.d/init-winepreqs-oneshot
 RUN touch etc/s6-overlay/s6-rc.d/user/contents.d/init-winepreqs-oneshot
 
@@ -39,6 +42,9 @@ RUN chmod +x -R /app/dcs_server/desktop-setup
 
 COPY ./src/helper_functions/logger_function /app/dcs_server/logger_function
 RUN chmod +x -R /app/dcs_server/logger_function
+
+COPY ./src/helper_functions/find_dcs_dirs_function /app/dcs_server/find_dcs_dirs_function
+RUN chmod +x -R /app/dcs_server/find_dcs_dirs_function
 
 # Add branding here to avoid it getting split into pieces in the output.
 COPY ./src/branding /etc/s6-overlay/s6-rc.d/init-adduser/branding2
