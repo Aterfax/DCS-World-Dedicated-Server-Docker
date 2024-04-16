@@ -74,7 +74,7 @@ Various automations and helper scripts are provided. In depth configuration and 
 
 After installation is complete, you can configure your server as you would do so typically, editing configuration or adding missions etc... at to the following path (which you can also open from the ``DCS Saved Games Dir`` desktop shortcut):
 
-    "/config/.wine/drive_c/users/abc/Saved Games/DCS.openbeta_server/"
+    "/config/.wine/drive_c/users/abc/Saved Games/DCS.release_server/"
 
 **Hint:** you can open the DCS WebGUI in the browser by using the ``Open DCS Server WebGUI`` desktop shortcut.
 

@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# Source DCS Dirs finder helper
+# This sets the following variables:
+# DCS_saved_games_dir_open_beta
+# DCS_saved_games_dir_release
+# DCS_install_dir_openbeta
+# DCS_install_dir_release
+source /app/dcs_server/find_dcs_dirs_function
+
 # If we're conducting an automatic module install just do that. First check if it was called with args.
 if [ $# -gt 0 ]; then
 
@@ -25,7 +33,7 @@ if [ $# -gt 0 ]; then
     fi
 
     # Start automated install
-    wine '/config/.wine/drive_c/Program Files/Eagle Dynamics/DCS World OpenBeta Server/bin/DCS_updater.exe' ${action} ${DCSMODULES}
+    wine "${DCS_install_dir_release}"/bin/DCS_updater.exe ${action} ${DCSMODULES}
 
     exit 0
 fi
@@ -104,6 +112,6 @@ selected_ids=($(printf "%s\n" "${!selected_ids_map[@]}" | sort))
 
 # Output the selected IDs as a space-separated list
 echo -e "\nAbout to run the following command: \n"
-echo -e "wine '/config/.wine/drive_c/Program Files/Eagle Dynamics/DCS World OpenBeta Server/bin/DCS_updater.exe' ${action} ${selected_ids[*]}"
+echo -e "wine ${DCS_install_dir_release}/bin/DCS_updater.exe ${action} ${selected_ids[*]}"
 read -rp "Press Enter to continue if this looks correct or Ctrl-C to abort."
-wine '/config/.wine/drive_c/Program Files/Eagle Dynamics/DCS World OpenBeta Server/bin/DCS_updater.exe' ${action} ${selected_ids[*]}
+wine "${DCS_install_dir_release}"/bin/DCS_updater.exe ${action} ${selected_ids[*]}
