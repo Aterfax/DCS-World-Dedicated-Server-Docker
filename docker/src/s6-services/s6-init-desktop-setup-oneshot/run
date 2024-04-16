@@ -1,10 +1,17 @@
 #!/usr/bin/env bash
 # shellcheck shell=bash
 
-# Define a logging function to prefix output to the docker logs.
-output_to_log() {
-    sed  's/^/[s6-init-desktop-setup] /'
+# Source the log helper after setting the prefix
+log_prefix="s6-init-desktop-setup"
+source /app/dcs_server/logger_function
+
+# Set up error handling
+handle_error() {
+    local exit_code="$?"
+    echo -e "Error occurred (Exit code: $exit_code)" 
+    exit "$exit_code"
 }
+trap handle_error ERR
 
 # Function to copy files if hashes differ
 copy_if_hash_differs() {
@@ -23,12 +30,12 @@ copy_if_hash_differs() {
 
     # Compare hashes
     if [ "$source_hash" = "$destination_hash" ]; then
-        echo "Not updating $destination_path as file already matches." | output_to_log
+        echo "Not updating $destination_path as file already matches." 
     else
         # Copy the file
         cp "$source_path" "$destination_path"
-        echo "Updating $destination_path as file does not match source file from the Docker image." | output_to_log
-        lsiown -R abc:users $destination_path | output_to_log
+        echo "Updating $destination_path as file does not match source file from the Docker image." 
+        lsiown -R abc:users $destination_path 
     fi
 }
 
@@ -36,10 +43,10 @@ copy_if_hash_differs() {
 sleep 5
 
 # Ensure that the wine prefix is owned by the user from the container.
-lsiown -R abc:users /config/Desktop | output_to_log
+lsiown -R abc:users /config/Desktop 
 
 # copy_if_hash_differs SRC DEST
 copy_if_hash_differs "/app/dcs_server/desktop-setup/Run_DCS_Install.desktop" "/config/Desktop/Run_DCS_Install.desktop"
 
-echo "Exiting" | output_to_log
+echo "Exiting" 
 exit 0

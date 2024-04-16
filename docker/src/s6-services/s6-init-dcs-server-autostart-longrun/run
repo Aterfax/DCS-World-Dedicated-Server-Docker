@@ -1,15 +1,14 @@
 #!/usr/bin/with-contenv bash
 # shellcheck shell=bash
 
-# Define a logging function to prefix output to the docker logs.
-output_to_log() {
-    sed  's/^/[s6-init-dcs-server-autostart-longrun] /'
-}
+# Source the log helper after setting the prefix
+log_prefix="s6-init-dcs-server-autostart-longrun"
+source /app/dcs_server/logger_function
 
 # Set up error handling
 handle_error() {
     local exit_code="$?"
-    echo -e "Error occurred (Exit code: $exit_code)"  | output_to_log
+    echo -e "Error occurred (Exit code: $exit_code)"  
     exit "$exit_code"
 }
 trap handle_error ERR
@@ -19,21 +18,21 @@ AUTOSTART="${AUTOSTART:-0}"
 TIMEOUT="${TIMEOUT:-30}"
 
 if [ "$AUTOSTART" -ne 1 ]; then
-    echo "Error: AUTOSTART is not set to 1. Server will not autostart. Exiting." | output_to_log
+    echo "Error: AUTOSTART is not set to 1. Server will not autostart. Exiting." 
     sleep $TIMEOUT
     exit 1
 fi
 
 network_vault_path="/config/.wine/drive_c/users/abc/Saved Games/DCS.openbeta_server/Config/network.vault"
 if [ ! -f "$network_vault_path" ]; then
-    echo "Error: File '$network_vault_path' does not exist. Cannot autostart without user logging in and saving credentials for autologin. Exiting." | output_to_log
+    echo "Error: File '$network_vault_path' does not exist. Cannot autostart without user logging in and saving credentials for autologin. Exiting." 
     sleep $TIMEOUT
     exit 1
 fi
 
 install_folder_path="/config/.wine/drive_c/Program Files/Eagle Dynamics"
 if [ ! -d "$install_folder_path" ]; then
-    echo "No installation detected. Cannot autostart. Exiting" | output_to_log
+    echo "No installation detected. Cannot autostart. Exiting" 
     sleep $TIMEOUT
     exit 1
 fi
@@ -42,10 +41,10 @@ while true; do
 startup_iterator=1
 pid=""
     if [ $startup_iterator -eq 1 ]; then
-        echo "Starting DCS Server" | output_to_log
+        echo "Starting DCS Server" 
         sudo -E -u abc wine '/config/.wine/drive_c/Program Files/Eagle Dynamics/DCS World OpenBeta Server/bin/DCS_server.exe' &
         pid=$! # This grabs the PID of the running Sneaker process and keeps it for later if needed.
-        echo "Server PID="$pid | output_to_log
+        echo "Server PID="$pid 
         startup_iterator=0
         #echo "Sleeping: $TIMEOUT"
         sleep $TIMEOUT
@@ -54,7 +53,7 @@ pid=""
     while true; do
         # Check if the service is still alive.
         if ps -p "$pid" > /dev/null; then
-            echo "############### Server still running. ###############" $(date +"%d-%m-%y-%T") | output_to_log
+            echo "############### Server still running. ###############" $(date +"%d-%m-%y-%T") 
             #echo "Sleeping: $TIMEOUT"
             sleep $TIMEOUT
         else

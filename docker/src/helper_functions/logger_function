@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# shellcheck shell=bash
+
+# Check if log_prefix is set; if not, set it to "unknown"
+if [[ -z "${log_prefix}" ]]; then
+    log_prefix="unknown"
+fi
+
+# Define a logging function to prefix output to the docker logs.
+output_to_log() {
+    sed "s/^/[$log_prefix] /"
+}
+
+# Redirect both stdout and stderr to the logging function
+exec 3>&1  # Save original stdout to file descriptor 3
+exec 2>&1  # Redirect stderr to stdout
+exec > >(output_to_log)  # Redirect stdout to output_to_log
