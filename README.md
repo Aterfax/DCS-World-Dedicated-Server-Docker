@@ -64,7 +64,7 @@ Various automations and helper scripts are provided. In depth configuration and 
 
 ## Example installation video
 
-[![ DCS World Dedicated Server Docker example install video ](https://i.ytimg.com/vi/IojMu9EW9KA/maxresdefault.jpg?sqp=-oaymwEmCIAKENAF8quKqQMa8AEB-AH-CYAC0AWKAgwIABABGD8gUyhyMA8=&rs=AOn4CLBKC2lADBy02xXmxzUki12KeHMbOw)](https://www.youtube.com/watch?v=IojMu9EW9KA " DCS World Dedicated Server Docker example install video ")
+[![ DCS World Dedicated Server Docker example install video ](https://i.ytimg.com/vi/IojMu9EW9KA/maxresdefault.jpg?sqp=-oaymwEmCIAKENAF8quKqQMa8AEB-AH-CYAC0AWKAgwIABABGD8gUyhyMA8=&rs=AOn4CLBKC2lADBy02xXmxzUki12KeHMbOw)](https://youtu.be/xHzJPLUOs5U " DCS World Dedicated Server Docker example install video ")
 
 **Hint:** Click the image to go to Youtube.
 
