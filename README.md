@@ -8,7 +8,7 @@
 
 **Q:** What does this Docker image do? 
 
-**A:** It lets you run the DCS Dedicated server on Linux (in a Docker container) with web based access to a GUI running the xfce desktop environment.
+**A:** It lets you run the DCS Dedicated server on Linux (in a Docker container) with web based access to a GUI running the xfce desktop environment complete with auto installation (including chosen map modules), auto startup and auto updates.
 
 ## Longer summary
 
