@@ -1,2 +1,4 @@
 # Auto detect text files and perform LF normalization
+run_include linguist-language=Shell
+run linguist-language=Shell
 * text=auto
