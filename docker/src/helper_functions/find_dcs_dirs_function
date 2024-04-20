@@ -12,13 +12,24 @@
 # From: "/config/.wine/drive_c/Program Files/Eagle Dynamics/DCS World OpenBeta Server"
 # To: "/config/.wine/drive_c/Program Files/Eagle Dynamics/DCS World Server"
 #
-# This script will parse and check if these folders exist and flag as such by settings variables.
+# This script will define some useful variables to store paths then
+# parse and check a subset to see if these folders exist and flag as such by settings other variables.
 
-# Paths to check
-DCS_saved_games_dir_open_beta="/config/.wine/drive_c/users/abc/Saved Games/DCS.openbeta_server"
-DCS_saved_games_dir_release="/config/.wine/drive_c/users/abc/Saved Games/DCS.release_server"
-DCS_install_dir_openbeta="/config/.wine/drive_c/Program Files/Eagle Dynamics/DCS World OpenBeta Server"
-DCS_install_dir_release="/config/.wine/drive_c/Program Files/Eagle Dynamics/DCS World Server"
+# Path variables
+WINE_appdata_local_dir="/config/.wine/drive_c/users/abc/AppData/Local/"
+WINE_appdata_roaming_dir="/config/.wine/drive_c/users/abc/AppData/Roaming/"
+WINE_user_saved_game_dir="/config/.wine/drive_c/users/abc/Saved Games"
+WINE_program_files_dir="/config/.wine/drive_c/Program Files"
+
+# Path variables actually checked
+DCS_saved_games_dir_open_beta="${WINE_user_saved_game_dir}/DCS.openbeta_server"
+DCS_saved_games_dir_release="${WINE_user_saved_game_dir}/DCS.release_server"
+DCS_install_dir_openbeta="${WINE_program_files_dir}/Eagle Dynamics/DCS World OpenBeta Server"
+DCS_install_dir_release="${WINE_program_files_dir}/Eagle Dynamics/DCS World Server"
+
+# Additional helper path variables
+DCS_bin_dir_openbeta="${DCS_install_dir_openbeta}/bin"
+DCS_bin_dir_release="${DCS_install_dir_release}/bin"
 
 # Check if Saved Games directories exist
 if [[ -d "$DCS_saved_games_dir_open_beta" ]]; then
