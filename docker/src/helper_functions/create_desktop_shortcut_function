@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# shellcheck shell=bash
+
+create_desktop_shortcut() {
+    target_executable="$1"
+    icon_path="$2"
+    name="$3"
+    terminalbool="$4"
+    workdir="$5"
+
+    desktop_file="$HOME/Desktop/${name// /_}.desktop"  # Replace spaces with underscores
+
+    # Create the desktop shortcut file
+    echo "[Desktop Entry]" > "$desktop_file"
+    echo "Version=1.0" >> "$desktop_file"
+    echo "Name=$name" >> "$desktop_file"
+    echo "Comment=$name" >> "$desktop_file"
+    echo "Exec=$target_executable" >> "$desktop_file"
+    echo "Icon=$icon_path" >> "$desktop_file"
+    echo "Terminal=$terminalbool" >> "$desktop_file"
+    echo "Type=Application" >> "$desktop_file"
+    echo "Categories=Game;" >> "$desktop_file"
+    [ -n "$workdir" ] && echo "Path=$workdir" >> "$desktop_file"
+
+    # Make the desktop shortcut executable
+    chmod +x "$desktop_file"
+}

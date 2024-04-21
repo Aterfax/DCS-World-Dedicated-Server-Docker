@@ -14,8 +14,7 @@ services:
       - AUTOSTART=${AUTOSTART:-0}
       - TIMEOUT=${TIMEOUT:-30}
       - ENABLE_DCS_RETRIBUTION=${ENABLE_DCS_RETRIBUTION:-0}
-      # ENABLE_DCS_RETRIBUTION also requires the DOCKER_MODS Environment variable set as below to function
-      # DOCKER_MODS=aterfax/dcs-world-dedicated-server-mod-retribution:latest
+      - DOCKER_MODS=aterfax/dcs-world-dedicated-server-mod-retribution:latest
     ports:
       # Webtop WebGUI ports    
       - '3000:3000/tcp' # Webtop HTTP port - TCP only.
@@ -34,7 +33,7 @@ services:
 
       # DCS SimpleRadio Standalone (DCS-SRS) ports
       #- '5002:5002/tcp' # Uncomment to enable DCS SimpleRadio Standalone (DCS-SRS) - TCP and UDP.
-      #- '5002:5002/udp' # Uncomment to enable DCS SimpleRadio Standalone (DCS-SRS) - TCP and UDP.  
+      #- '5002:5002/udp' # Uncomment to enable DCS SimpleRadio Standalone (DCS-SRS) - TCP and UDP.      
     volumes:
       - '${HOME}/dcs-world-dedicated-server:/config/'
     # Setting seccomp to unconfined with security_opt is necessary if you encounter 'Failed to execute child process "bash": Failed to fdwalk: Operation not permitted' errors.
@@ -44,28 +43,3 @@ services:
       #- seccomp=unconfined
     restart: always
     image: aterfax/dcs-world-dedicated-server
-    networks:
-      - db_shared_network
-
-  postgres:
-    container_name: dcs-world-dedicated-server-postgres
-    environment:
-      - POSTGRES_USER=$POSTGRES_USER
-      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
-      - POSTGRES_DB=$POSTGRES_DB
-    volumes:
-      - '${HOME}/dcs-world-dedicated-server/postgres:/var/lib/postgresql/data'
-    restart: always
-    image: postgres:latest
-    networks:
-      - db_shared_network
-
-  adminer:
-    image: adminer
-    container_name: dcs-world-dedicated-server-adminer
-    restart: always
-    networks:
-      - db_shared_network
-
-networks:
-  db_shared_network:

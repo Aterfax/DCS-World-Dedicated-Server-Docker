@@ -1,0 +1,24 @@
+#
+# DCS-World-Dedicated-Server-Docker-Mod-Retribution Dockerfile.
+# aterfax/dcs-world-dedicated-server-mod-retribution
+#
+# We need busybox or we have no shell commands.
+FROM busybox AS buildstage
+
+# Add the s6 scripting / helper functions for Retribution install and update.
+COPY ./src/helper_functions/create_desktop_shortcut_function /root-layer/app/dcs_server/create_desktop_shortcut_function
+COPY ./src/s6-services/s6-init-dcs-retribution-auto-installer-updater-oneshot /root-layer/etc/s6-overlay/s6-rc.d/init-dcs-retribution-auto-installer-updater-oneshot
+RUN mkdir -p /root-layer/etc/s6-overlay/s6-rc.d/user/contents.d/ && \
+    touch /root-layer/etc/s6-overlay/s6-rc.d/user/contents.d/init-dcs-retribution-auto-installer-updater-oneshot
+
+# Add start dependency to server autostart to ensure Retribution is installed before start.    
+RUN mkdir -p /root-layer/etc/s6-overlay/s6-rc.d/init-dcs-server-autostart-longrun/dependencies.d && \
+    touch /root-layer/etc/s6-overlay/s6-rc.d/init-dcs-server-autostart-longrun/dependencies.d/init-dcs-retribution-auto-installer-updater-oneshot
+    
+FROM scratch
+LABEL maintainer="Aterfax"
+
+# Add files from buildstage - note you can only run a single command here.
+# Subsequent COPY commands will add new layers which will be ignored by
+# the container.
+COPY --from=buildstage /root-layer/ /
