@@ -20,6 +20,7 @@ Various automations and helper scripts are provided. In depth configuration and 
 
 - [Quickstart](#Quickstart)
 - [Configuration](#Configuration)
+- [Supported docker mods](#supported-docker-mods)
 - [FAQ](#FAQ)
 - [Troubleshooting](#Troubleshooting)
 - [Contributing](#Contributing)
