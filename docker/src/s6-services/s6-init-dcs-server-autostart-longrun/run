@@ -32,6 +32,13 @@ if [ "$AUTOSTART" -ne 1 ]; then
     exit 1
 fi
 
+dcs_lock_file="${DCS_saved_games_dir_current}/dcs.lock"
+if [ -f "$dcs_lock_file" ]; then
+    echo "Error: File '$dcs_lock_file' is present. Server is already running or lockfile must be manually removed by user. Cannot autostart. Exiting." 
+    sleep $TIMEOUT
+    exit 1
+fi
+
 network_vault_path="${DCS_saved_games_dir_current}/Config/network.vault"
 if [ ! -f "$network_vault_path" ]; then
     MSG="Error: File '$network_vault_path' does not exist. Cannot autostart without user logging in and saving credentials for autologin. Exiting." 
