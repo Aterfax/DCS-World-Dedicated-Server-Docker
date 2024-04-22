@@ -46,7 +46,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./docker
-          file: Dockerfile.DockerMod.dcs-retribution
+          file: ./docker/Dockerfile.DockerMod.dcs-retribution
           push: true
           tags: |
             aterfax/dcs-world-dedicated-server-mod-retribution:latest 
