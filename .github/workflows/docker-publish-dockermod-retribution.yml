@@ -1,4 +1,4 @@
-name: Build and Publish DCS-World-Dedicated-Server-Docker Image
+name: Build and Publish DCS-World-Dedicated-Server-Docker-Mod-Retribution Image
 
 on:
   push:
@@ -11,7 +11,7 @@ on:
 
 jobs:
   build-and-push-docker-image:
-    name: Build DCS-World-Dedicated-Server-Docker image and push to repositories
+    name: Build DCS-World-Dedicated-Server-Docker-Mod-Retribution image and push to repositories
     runs-on: ubuntu-latest
     steps:
 
@@ -46,13 +46,13 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./docker
-          file: ./docker/Dockerfile
+          file: ./docker/Dockerfile.DockerMod.dcs-retribution
           push: true
           tags: |
-            aterfax/dcs-world-dedicated-server:latest 
-            ghcr.io/aterfax/dcs-world-dedicated-server:latest
-            aterfax/dcs-world-dedicated-server:${{ env.DATE }}
-            ghcr.io/aterfax/dcs-world-dedicated-server:${{ env.DATE }}
+            aterfax/dcs-world-dedicated-server-mod-retribution:latest 
+            ghcr.io/aterfax/dcs-world-dedicated-server-mod-retribution:latest
+            aterfax/dcs-world-dedicated-server-mod-retribution:${{ env.DATE }}
+            ghcr.io/aterfax/dcs-world-dedicated-server-mod-retribution:${{ env.DATE }}
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}

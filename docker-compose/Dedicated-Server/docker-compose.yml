@@ -13,6 +13,9 @@ services:
       - FORCEREINSTALL=${FORCEREINSTALL:-0}
       - AUTOSTART=${AUTOSTART:-0}
       - TIMEOUT=${TIMEOUT:-30}
+      - ENABLE_DCS_RETRIBUTION=${ENABLE_DCS_RETRIBUTION:-0}
+      # ENABLE_DCS_RETRIBUTION also requires the DOCKER_MODS Environment variable set as below to function
+      # DOCKER_MODS=aterfax/dcs-world-dedicated-server-mod-retribution:latest
     ports:
       # Webtop WebGUI ports    
       - '3000:3000/tcp' # Webtop HTTP port - TCP only.

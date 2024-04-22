@@ -1,0 +1,152 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash
+
+# Source the log helper after setting the prefix
+log_prefix="s6-init-dcs-retribution-auto-installer-updater-oneshot"
+source /app/dcs_server/logger_function
+
+# Set up error handling
+handle_error() {
+    local exit_code="$?"
+    echo -e "Error occurred (Exit code: $exit_code)"  
+    exit "$exit_code"
+}
+trap handle_error ERR
+
+# Get/set default value for ENABLE_DCS_RETRIBUTION if not already set
+ENABLE_DCS_RETRIBUTION="${ENABLE_DCS_RETRIBUTION:-0}"
+echo -e "ENABLE_DCS_RETRIBUTION=$ENABLE_DCS_RETRIBUTION" 
+
+if [ "${ENABLE_DCS_RETRIBUTION}"  -ne 1 ]; then
+    echo "No ENABLE_DCS_RETRIBUTION variable set, skipping DCS Retribution installation or update."
+    exit 0
+fi
+
+# Source DCS Dirs finder helper
+# This sets the following variables:
+# WINE_user_saved_game_dir="/config/.wine/drive_c/users/abc/Saved Games"
+# WINE_program_files_dir="/config/.wine/drive_c/Program Files"
+# DCS_saved_games_dir_open_beta
+# DCS_saved_games_dir_release
+# DCS_install_dir_openbeta
+# DCS_install_dir_release
+# DCS_bin_dir_openbeta
+# DCS_bin_dir_release
+source /app/dcs_server/find_dcs_dirs_function
+
+[ -d "${DCS_saved_games_dir_release}/Missions" ] || sudo -E -u abc mkdir -p "${DCS_saved_games_dir_release}/Missions"
+[ -d "${DCS_saved_games_dir_release}/MissionEditor/UnitPayloads" ] || sudo -E -u abc mkdir -p "${DCS_saved_games_dir_release}/MissionEditor/UnitPayloads"
+
+echo "Installing DCS Retribution"
+
+Retribution_latest_release_manifest=$(curl -s https://api.github.com/repos/dcs-retribution/dcs-retribution/releases/latest)
+Retribution_download_url=$(echo $Retribution_latest_release_manifest | jq -r .assets[0].browser_download_url)
+Retribution_tag=$(echo $Retribution_latest_release_manifest | jq -r .name)
+
+Retribution_zip_dl_path="${WINE_user_saved_game_dir}/dcs-retribution-$Retribution_tag.zip"
+Retribution_install_dir="${WINE_user_saved_game_dir}/dcs-retribution"
+
+Retribution_present_version_file="${WINE_user_saved_game_dir}/dcs-retribution.version.txt"
+Retribution_appdata_local="${WINE_appdata_local_dir}/DCSRetribution"
+Retribution_cfg_file_path="$Retribution_appdata_local/retribution_preferences.json"
+
+echo "Checking if DCS Retribution latest ${Retribution_tag} needs to be downloaded..."
+
+# If there's no file or the version is missing, we need to update
+if [ ! -f "$Retribution_present_version_file" ] || grep -v "$Retribution_tag" "$Retribution_present_version_file"; then
+    echo "Downloading $Retribution_download_url"
+    sudo -E -u abc wget "$Retribution_download_url" -O "$Retribution_zip_dl_path" && \
+    sudo -E -u abc unzip -qq -o "$Retribution_zip_dl_path" -d "${WINE_user_saved_game_dir}" && \
+    rm "$Retribution_zip_dl_path" && \
+    sudo -E -u abc echo "$Retribution_tag" > "$Retribution_present_version_file"
+fi
+
+if [ ! -f "$Retribution_cfg_file_path" ]; then
+    [ -d "$Retribution_appdata_local" ] || sudo -E -u abc mkdir "$Retribution_appdata_local"
+    
+    # Function to convert Linux-like pathing to WINE Windows-like pathing
+    convert_path() {
+        local path="$1"
+        # i.e. Replace '/config/.wine/drive_c' with 'C:/'
+        echo "${path//\/config\/.wine\/drive_c/C:}"
+    }
+    # Generate retribution_preferences.json using heredoc
+    sudo -E -u abc cat <<EOF > "$Retribution_cfg_file_path"
+{
+    "saved_game_dir": "$(convert_path "$DCS_saved_games_dir_release")",
+    "dcs_install_dir": "$(convert_path "$DCS_install_dir_release")",
+    "last_save_file": "$(convert_path "$DCS_saved_games_dir_release")/Retribution/Saves/initialsave.retribution",
+    "ignore_empty_install_directory": false,
+    "prefer_liberation_payloads": false,
+    "server_port": 16880
+}
+EOF
+    echo "Generated default retribution config: $Retribution_cfg_file_path"
+fi
+
+DCS_Misson_scripting_lua_path="${DCS_install_dir_release}/Scripts/MissionScripting.lua"
+echo "Deactivating sanitizeModule"
+if [ -f "$DCS_Misson_scripting_lua_path" ]; then
+    sed -i "s/sanitizeModule('os')/--sanitizeModule('os')/g" "$DCS_Misson_scripting_lua_path"
+    sed -i "s/sanitizeModule('io')/--sanitizeModule('io')/g" "$DCS_Misson_scripting_lua_path"
+    sed -i "s/sanitizeModule('lfs')/--sanitizeModule('lfs')/g" "$DCS_Misson_scripting_lua_path"
+fi
+
+echo "Adding desktop shortcut."
+# Run subsequent commands as user 'abc' using sudo
+sudo -E -u abc bash <<EOF
+# Source the desktop shortcut creation function
+# target_executable="$1"
+# icon_path="$2"
+# name="$3"
+# terminalbool="$4"
+# workdir="$5"
+source /app/dcs_server/create_desktop_shortcut_function
+
+# Create the desktop shortcut
+create_desktop_shortcut "bash -c 'SERVER_BIND_ADDRESS=\"0.0.0.0\" wine \"$Retribution_install_dir/retribution_main.exe\"'" \
+                        "$Retribution_install_dir/resources/icon.ico" \
+                        "DCS Retribution" \
+                        "false" \
+                        "$Retribution_install_dir"
+EOF
+
+# Add font smoothing
+cat <<EOF > /tmp/fontsmoothing.reg
+REGEDIT4
+
+[HKEY_CURRENT_USER\Control Panel\Desktop]
+"FontSmoothing"="2"
+"FontSmoothingOrientation"=dword:00000001
+"FontSmoothingType"=dword:00000002
+"FontSmoothingGamma"=dword:00000578
+EOF
+
+# Use wine to apply the registry settings from fontsmoothing.reg
+echo "Adding font smoothing registry entry."
+
+sudo -E -u abc bash <<'EOF'
+wine regedit /tmp/fontsmoothing.reg
+EOF
+
+# The heredoc delimiter <<'EOF' uses single quotes ('EOF') to prevent variable expansion.
+# which would break this otherwise.
+sudo -E -u abc bash <<'EOF'
+# Bodge fonts due to Courier font requirement
+wine_fonts_dir="/config/.wine/drive_c/windows/Fonts"
+source_font="/usr/share/fonts/noto/NotoSans-Regular.ttf"
+target_font="$wine_fonts_dir/courbd.ttf"
+
+echo "Fixing missing font issue."
+# Check if the target font file does not exist before copying
+if [ ! -f "$target_font" ]; then
+    # Ensure the wine fonts directory exists
+    mkdir -p "$wine_fonts_dir"
+
+    # Copy the source font to the wine fonts directory
+    cp "$source_font" "$target_font"
+fi
+EOF
+
+echo "DCS Retribution installation complete."
+exit 0

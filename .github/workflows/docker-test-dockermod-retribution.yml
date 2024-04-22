@@ -1,4 +1,4 @@
-name: Build DCS-World-Dedicated-Server-Docker Image
+name: Build DCS-World-Dedicated-Server-Docker-Mod-Retribution Image
 
 on:
   # run it during pull request
@@ -9,7 +9,7 @@ on:
 jobs:
   # define job to build and publish docker image
   build-docker-image:
-    name: Build DCS-World-Dedicated-Server-Docker image only
+    name: Build DCS-World-Dedicated-Server-Docker-Mod-Retribution image only
     # run only when code is compiling and tests are passing
     runs-on: ubuntu-latest
 
@@ -30,7 +30,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./docker
-          file: ./docker/Dockerfile
+          file: ./docker/Dockerfile.DockerMod.dcs-retribution
           push: false
 
       - name: Image digest
