@@ -47,7 +47,7 @@ Various automations and helper scripts are provided. In depth configuration and 
 
   * **Note:** Even if you request a manual installation, if you have set the environment variables ``DCSAUTOINSTALL=1`` and given a valid ``DCSMODULES`` list in your docker compose ``.env`` file, the installer will be fully automated from this point. If you have not elected to set the above, the installer will first install the base server and then prompt you to interactively choose the terrain modules to install. 
 * Post server installation, various shortcuts will now also have been added to the desktop for opening the server WebGUI or running and updating the DCS server, installing or removing modules and opening DCS server related directories.
-* Once you have configured your DCS Server installation to your taste, you can set it to auto start by defining the environment variable ``AUTOSTART=1``.
+* Once you have configured your DCS Server installation to your taste, you can set it to auto start by defining the environment variable ``AUTOSTART=1``. Note: this will only function if you save login details and enable auto login on the DCS launcher.
 
 ### Using a self built image
 
@@ -78,7 +78,7 @@ After installation is complete, you can configure your server as you would do so
 
 **Hint:** you can open the DCS WebGUI in the browser by using the ``Open DCS Server WebGUI`` desktop shortcut.
 
-**Hint:** you can set the DCS server to auto start by defining the environment variable ``AUTOSTART=1``.
+**Hint:** you can set the DCS server to auto start by defining the environment variable ``AUTOSTART=1``. Note: this will only function if you save login details and enable auto login on the DCS launcher.
 
 **Hint:** upload of files to the folder above can be done using the KASM menu's file manager as shown below.
 
@@ -113,8 +113,30 @@ The following environment variables can be configured to customize the behavior 
 | FORCEREINSTALL     | `0`                          | `1` or `0`              | Controls whether the installer will forcefully remove existing installations during (re)installation of the DCS server. Set to `1` for forceful reinstall, and `0` to disable forceful reinstall. |
 | AUTOSTART          | `0`                          | `1` or `0`              | Controls whether the DCS Server will automatically start. Set to `1` for automatic startup, and `0` to disable automatic startup. |
 | TIMEOUT            | `60`                         | Numeric value (whole number) | Specifies the interval in seconds between various "liveness" checks (e.g. `60` seconds).                               |
+| ENABLE_DCS_RETRIBUTION          | `0`                          | `1` or `0`              | Controls whether the DCS Retribution will automatically install / update. Set to `1` to enable, and `0` to disable. Note: the docker mod must be added as detailed below in the "Supported docker mods" section for this to function. |
 
 Further valid environment variables for the image this project is built on can be found at the [linuxserver/webtop image](https://docs.linuxserver.io/images/docker-webtop) documentation page.
+
+## Supported docker mods
+
+This image is planned to support extended functionality and modifications using the LinuxServer.io [docker mods](https://github.com/linuxserver/docker-mods) mechanism.
+
+The currently supported DockerMods will be listed below.
+
+### DCS Retribution
+
+[DCS Retribution](https://github.com/dcs-retribution/dcs-retribution) was forked from DCS Liberation, which is a DCS World turn based single-player or co-op dynamic campaign. It is an external program that generates full and complex DCS missions and manage a persistent combat environment. When enabled, a desktop shortcut is added and it can be used inside the container.
+
+To use this docker mod, two variables must be added to your docker compose file:
+
+    - ENABLE_DCS_RETRIBUTION=${ENABLE_DCS_RETRIBUTION:-0}
+    - DOCKER_MODS=aterfax/dcs-world-dedicated-server-mod-retribution:latest
+
+And you must set the ``ENABLE_DCS_RETRIBUTION=1`` in your ``.env`` file.
+
+An example compose file is also provided: [docker-compose/Dedicated-Server-DockerMod-Retribution](docker-compose/Dedicated-Server-DockerMod-Retribution/).
+
+The Dockerfile for this mod can be found at:  [docker/Dockerfile.DockerMod.dcs-retribution](docker/Dockerfile.DockerMod.dcs-retribution)
 
 ## FAQ
 
