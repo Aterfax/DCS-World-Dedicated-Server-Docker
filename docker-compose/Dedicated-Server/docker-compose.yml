@@ -1,8 +1,8 @@
 version: '3.3'
 services:
   dcs-world-dedicated-server:
-    container_name: dcs-world-dedicated-server
-    hostname: dcs-world-dedicated-server
+    container_name: ddcs
+    hostname: dynamicdcs.com
     environment:
       - PUID=$PUID
       - PGID=$PGID
@@ -24,8 +24,8 @@ services:
       # DCS server Ports      
       - '10308:10308/tcp' # Multiplayer game traffic - TCP.
       - '10308:10308/udp' # Multiplayer game traffic - UDP.      
-      #- '10309:10309/tcp' # Multiplayer game VOIP traffic - TCP - Uncomment if in game VOIP is desired.
-      #- '10309:10309/udp' # Multiplayer game VOIP traffic - UDP - Uncomment if in game VOIP is desired.      
+      - '10309:10309/tcp' # Multiplayer game VOIP traffic - TCP - Uncomment if in game VOIP is desired.
+      - '10309:10309/udp' # Multiplayer game VOIP traffic - UDP - Uncomment if in game VOIP is desired.
       #- '8088:8088' # Uncomment to enable remote web control webGUI from the Eagle Dynamics website - TCP only.
 
       # Tacview ports
@@ -43,4 +43,4 @@ services:
     #security_opt:
       #- seccomp=unconfined
     restart: always
-    image: aterfax/dcs-world-dedicated-server
+    image: afinegan/ddcs
