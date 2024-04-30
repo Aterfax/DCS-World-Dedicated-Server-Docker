@@ -43,7 +43,7 @@ fi
 
 if [ "$DCSAUTOINSTALL" -eq 1 ]; then
     # Validate DCSMODULES using regex (alphanumeric, underscores, or spaces)
-    if ! [[ "$DCSMODULES" =~ ^[A-Za-z0-9_[:space:]]*$ ]]; then
+    if ! [[ "$DCSMODULES" =~ ^[A-Za-z0-9_\-[:space:]]*$ ]]; then
         echo "Invalid value for DCSMODULES. The list should be supplied as a whitespace separated list of modules as per https://forum.dcs.world/topic/324040-eagle-dynamics-modular-dedicated-server-installer/"
         exit 1
     fi
