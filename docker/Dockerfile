@@ -4,7 +4,7 @@
 #
 FROM lscr.io/linuxserver/webtop:latest
 
-LABEL maintainer="Aterfax"
+LABEL maintainer="afinegan"
 
 # Wine 64Bit for running EXE
 RUN apk add --no-cache wine freetype wget cabextract xdotool xdg-utils xvfb xvfb-run git python3 python3-dev py3-pip 7zip make cmake gcc g++ gfortran innoextract
