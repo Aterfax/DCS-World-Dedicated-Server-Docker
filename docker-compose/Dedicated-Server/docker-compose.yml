@@ -1,7 +1,7 @@
 version: '3.3'
 services:
-  DDCS:
-    container_name: DDCS
+  ddcs4:
+    container_name: ddcs4
     hostname: dynamicdcs.com
     environment:
       - PUID=$PUID
@@ -43,4 +43,4 @@ services:
     #security_opt:
       #- seccomp=unconfined
     restart: always
-    image: afinegan/ddcs
+    image: afinegan/ddcs4:latest
