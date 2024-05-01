@@ -1,0 +1,23 @@
+# Use an official Node runtime as a parent image
+FROM node:18-alpine
+
+# Set the working directory in the container
+WORKDIR /usr/src/app
+
+# Install PM2 globally
+RUN npm install pm2 -g
+
+# Install git in the image to clone the repository
+RUN apk add --no-cache git
+
+# Clone the specific repo
+RUN git clone https://github.com/afinegan/DDCS.git .
+
+# Install any needed packages specified in package.json
+RUN npm install
+
+# Expose the port the app runs on
+EXPOSE 3002 3003
+
+# Define command to run the app using PM2
+CMD ["pm2-runtime", "start", "ecosystem.config.js"]
