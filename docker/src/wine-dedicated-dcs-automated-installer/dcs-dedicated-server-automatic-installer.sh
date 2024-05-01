@@ -95,7 +95,7 @@ create_desktop_shortcut "xdg-open \"${DCS_install_dir_release}/\""\
 
 # Validate DCSMODULES using regex (alphanumeric, underscores, or spaces).
 # Works for installations or updates.
-if [[ "$DCSMODULES" =~ ^[A-Za-z0-9_[:space:]]*$ ]]; then
+if [[ "$DCSMODULES" =~ ^[A-Za-z0-9_\-[:space:]]*$ ]]; then
     echo "Modules installation starting."
     /app/dcs_server/wine-dedicated-dcs-automated-installer/dcs-dedicated-server-module-installer.sh install "$DCSMODULES"
     echo
