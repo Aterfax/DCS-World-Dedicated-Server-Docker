@@ -36,7 +36,7 @@ services:
       #- '5002:5002/tcp' # Uncomment to enable DCS SimpleRadio Standalone (DCS-SRS) - TCP and UDP.
       #- '5002:5002/udp' # Uncomment to enable DCS SimpleRadio Standalone (DCS-SRS) - TCP and UDP.      
     volumes:
-      - '${HOME}/dcs-world-dedicated-server:/config/'
+      - '${HOME}/ddcs4:/config/'
     # Setting seccomp to unconfined with security_opt is necessary if you encounter 'Failed to execute child process "bash": Failed to fdwalk: Operation not permitted' errors.
     # You should not unconfine unless necessary.
     # See also: https://docs.linuxserver.io/images/docker-webtop/#application-setup
@@ -44,3 +44,19 @@ services:
       - seccomp=unconfined
     restart: always
     image: afinegan/ddcs4:latest
+    networks:
+      - db_shared_network
+
+  mongodb:
+    container_name: ddcs4-mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: $MONGO_INITDB_ROOT_USERNAME
+      MONGO_INITDB_ROOT_PASSWORD: $MONGO_INITDB_ROOT_PASSWORD
+    ports:
+      - "27017:27017"
+    volumes:
+      - '${HOME}/ddcs4/mongodb:/data/db'
+    restart: always
+    image: mongo
+    networks:
+      - db_shared_network
