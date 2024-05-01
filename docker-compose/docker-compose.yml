@@ -3,11 +3,6 @@ services:
   ddcs4:
     container_name: ddcs4
     hostname: dynamicdcs.com
-    build:
-      context: ../docker
-      dockerfile: Dockerfile
-      args:
-          GITHUB_TOKEN: ${GITHUB_TOKEN}
     environment:
       - PUID=$PUID
       - PGID=$PGID
@@ -60,18 +55,6 @@ services:
       - '${HOME}/ddcs4/mongodb:/data/db'
     restart: always
     image: mongo
-    networks:
-      - db_shared_network
-
-  node-server:
-    build: .
-    ports:
-      - "3002:3002"
-      - "3003:3003"
-    environment:
-      NODE_ENV: production
-    volumes:
-      - /usr/src/app/node_modules
     networks:
       - db_shared_network
 
