@@ -57,7 +57,7 @@ RUN apk add --update nodejs npm
 RUN npm install pm2 -g
 
 # Clone the repository and install Node.js dependencies
-RUN git clone https://github.com/afinegan/DDCS.git .
+RUN git clone https://$GITHUB_TOKEN@github.com/afinegan/DDCS.git .
 RUN npm install
 
 # Expose the ports the app runs on
