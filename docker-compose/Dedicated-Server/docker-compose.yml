@@ -63,7 +63,7 @@ services:
     networks:
       - db_shared_network
 
-  app:
+  node-server:
     build: .
     ports:
       - "3002:3002"
@@ -74,3 +74,6 @@ services:
       - /usr/src/app/node_modules
     networks:
       - db_shared_network
+
+networks:
+  db_shared_network:
