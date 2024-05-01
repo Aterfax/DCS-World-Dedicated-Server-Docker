@@ -5,6 +5,9 @@ services:
     hostname: dynamicdcs.com
     build:
       context: ../docker
+      dockerfile: Dockerfile
+      args:
+          GITHUB_TOKEN: ${GITHUB_TOKEN}
     environment:
       - PUID=$PUID
       - PGID=$PGID
