@@ -3,6 +3,8 @@ services:
   ddcs4:
     container_name: ddcs4
     hostname: dynamicdcs.com
+    build:
+      context: ../../docker
     environment:
       - PUID=$PUID
       - PGID=$PGID
@@ -64,7 +66,7 @@ services:
   app:
     build: .
     ports:
-      - "3001:3001"
+      - "3002:3002"
       - "3003:3003"
     environment:
       NODE_ENV: production
