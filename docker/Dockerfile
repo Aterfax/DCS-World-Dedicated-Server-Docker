@@ -70,7 +70,7 @@ RUN npm install
 RUN npm run build
 
 # Expose the port the app runs on
-EXPOSE 3001 3003
+EXPOSE 3002 3003
 
 # Define command to run the app using PM2
 CMD ["pm2-runtime", "start", "ecosystem.config.js"]
