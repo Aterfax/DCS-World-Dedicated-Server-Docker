@@ -60,3 +60,15 @@ services:
     image: mongo
     networks:
       - db_shared_network
+
+  app:
+    build: .
+    ports:
+      - "3001:3001"
+      - "3003:3003"
+    environment:
+      NODE_ENV: production
+    volumes:
+      - /usr/src/app/node_modules
+    networks:
+      - db_shared_network

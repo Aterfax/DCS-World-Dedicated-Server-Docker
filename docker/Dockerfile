@@ -49,3 +49,28 @@ RUN chmod +x -R /app/dcs_server/find_dcs_dirs_function
 # Add branding here to avoid it getting split into pieces in the output.
 COPY ./src/branding /etc/s6-overlay/s6-rc.d/init-adduser/branding2
 RUN sed -i '/cat \/etc\/s6-overlay\/s6-rc.d\/init-adduser\/branding/a\cat \/etc\/s6-overlay\/s6-rc.d\/init-adduser\/branding2' /etc/s6-overlay/s6-rc.d/init-adduser/run
+
+#install nodejs and pm2
+# Set the working directory in the container
+WORKDIR /usr/src/app
+
+# Install PM2 globally
+RUN npm install pm2 -g
+
+# Install git in the image to clone the repository
+RUN apk add --no-cache git
+
+# Clone the specific repo
+RUN git clone https://github.com/afinegan/DDCS.git .
+
+# Install any needed packages specified in package.json
+RUN npm install
+
+# If necessary, build the project (assuming npm script 'build' exists)
+RUN npm run build
+
+# Expose the port the app runs on
+EXPOSE 3001 3003
+
+# Define command to run the app using PM2
+CMD ["pm2-runtime", "start", "ecosystem.config.js"]
