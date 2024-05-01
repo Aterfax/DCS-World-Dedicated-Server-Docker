@@ -1,75 +1,47 @@
 #
-# DCS-World-Dedicated-Server-Docker Dockerfile.
-# aterfax/dcs-world-dedicated-server
+# afinegan/ddcs4:latest
 #
 FROM lscr.io/linuxserver/webtop:latest
 
 LABEL maintainer="afinegan"
 
-# Wine 64Bit for running EXE
+# Install Wine and other necessary packages
 RUN apk add --no-cache wine freetype wget cabextract xdotool xdg-utils xvfb xvfb-run git python3 python3-dev py3-pip 7zip make cmake gcc g++ gfortran innoextract
 
-# Download the latest winetricks script (master="latest version") from Github.
+# Download and set up the latest winetricks
 RUN wget https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks && chmod +x winetricks
 RUN mv winetricks /usr/bin
 
+# Set permissions for Wine configuration
 RUN mkdir /config/.wine && chown abc:users -R /config/.wine
 RUN mkdir /config/.cache && chown abc:users -R /config/.cache
 
-COPY ./src/s6-services/s6-init-migrate-dcs-oneshot /etc/s6-overlay/s6-rc.d/init-migrate-dcs-oneshot
-RUN touch etc/s6-overlay/s6-rc.d/user/contents.d/init-migrate-dcs-oneshot
+# Copy initialization scripts and set permissions
+COPY ./src/s6-services/*.oneshot /etc/s6-overlay/s6-rc.d/
+RUN chmod +x /etc/s6-overlay/s6-rc.d/*.oneshot
 
-COPY ./src/s6-services/s6-init-winepreqs-oneshot /etc/s6-overlay/s6-rc.d/init-winepreqs-oneshot
-RUN touch etc/s6-overlay/s6-rc.d/user/contents.d/init-winepreqs-oneshot
-
-COPY ./src/s6-services/s6-init-getlatest-dcs-installer-oneshot /etc/s6-overlay/s6-rc.d/init-getlatest-dcs-installer-oneshot
-RUN touch etc/s6-overlay/s6-rc.d/user/contents.d/init-getlatest-dcs-installer-oneshot
-
-COPY ./src/s6-services/s6-init-desktop-setup-oneshot /etc/s6-overlay/s6-rc.d/init-desktop-setup-oneshot
-RUN touch etc/s6-overlay/s6-rc.d/user/contents.d/init-desktop-setup-oneshot
-
+# Copy and set up server installation and utilities
 COPY ./src/wine-dedicated-dcs-automated-installer /app/dcs_server/wine-dedicated-dcs-automated-installer
-RUN chmod +x -R /app/dcs_server/wine-dedicated-dcs-automated-installer
-
-COPY ./src/s6-services/s6-init-dcs-auto-installer-updater-oneshot /etc/s6-overlay/s6-rc.d/init-dcs-auto-installer-updater-oneshot
-RUN touch etc/s6-overlay/s6-rc.d/user/contents.d/init-dcs-auto-installer-updater-oneshot
-
-COPY ./src/s6-services/s6-init-dcs-server-autostart-longrun /etc/s6-overlay/s6-rc.d/init-dcs-server-autostart-longrun
-RUN touch etc/s6-overlay/s6-rc.d/user/contents.d/init-dcs-server-autostart-longrun
-
 COPY ./src/desktop-setup /app/dcs_server/desktop-setup
-RUN chmod +x -R /app/dcs_server/desktop-setup
+COPY ./src/helper_functions/* /app/dcs_server/
+RUN chmod +x -R /app/dcs_server/
 
-COPY ./src/helper_functions/logger_function /app/dcs_server/logger_function
-RUN chmod +x -R /app/dcs_server/logger_function
-
-COPY ./src/helper_functions/find_dcs_dirs_function /app/dcs_server/find_dcs_dirs_function
-RUN chmod +x -R /app/dcs_server/find_dcs_dirs_function
-
-# Add branding here to avoid it getting split into pieces in the output.
+# Add additional branding
 COPY ./src/branding /etc/s6-overlay/s6-rc.d/init-adduser/branding2
 RUN sed -i '/cat \/etc\/s6-overlay\/s6-rc.d\/init-adduser\/branding/a\cat \/etc\/s6-overlay\/s6-rc.d\/init-adduser\/branding2' /etc/s6-overlay/s6-rc.d/init-adduser/run
 
-#install nodejs and pm2
 # Set the working directory in the container
 WORKDIR /usr/src/app
 
-# Install PM2 globally
+# Install Node.js, npm, and PM2
+RUN apk add --update nodejs npm
 RUN npm install pm2 -g
 
-# Install git in the image to clone the repository
-RUN apk add --no-cache git
-
-# Clone the specific repo
+# Clone the repository and install Node.js dependencies
 RUN git clone https://github.com/afinegan/DDCS.git .
-
-# Install any needed packages specified in package.json
 RUN npm install
 
-# If necessary, build the project (assuming npm script 'build' exists)
-RUN npm run build
-
-# Expose the port the app runs on
+# Expose the ports the app runs on
 EXPOSE 3002 3003
 
 # Define command to run the app using PM2
