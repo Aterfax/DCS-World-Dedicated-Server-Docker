@@ -1,9 +1,14 @@
 version: '3.3'
 services:
-  ddcs4:
-    container_name: ddcs4
+  ddcs4-dcs:
+    depends_on:
+      - ddcs4-mongodb
+      - ddcs4-node
+    container_name: ddcs4-dcs
     hostname: dynamicdcs.com
     environment:
+      - DDCSSERVER=1
+      - HOME=/config
       - PUID=$PUID
       - PGID=$PGID
       - TZ=$TZ
@@ -14,49 +19,53 @@ services:
       - AUTOSTART=${AUTOSTART:-0}
       - TIMEOUT=${TIMEOUT:-30}
     ports:
-      # Webtop WebGUI ports    
       - '3000:3000/tcp' # Webtop HTTP port - TCP only.
-      - '3001:3001/tcp' # Webtop HTTPs port - TCP only.
-
-      # DCS server Ports      
       - '10308:10308/tcp' # Multiplayer game traffic - TCP.
-      - '10308:10308/udp' # Multiplayer game traffic - UDP.      
-      - '10309:10309/tcp' # Multiplayer game VOIP traffic - TCP - Uncomment if in game VOIP is desired.
-      - '10309:10309/udp' # Multiplayer game VOIP traffic - UDP - Uncomment if in game VOIP is desired.
-      #- '8088:8088' # Uncomment to enable remote web control webGUI from the Eagle Dynamics website - TCP only.
-
-      # Tacview ports
-      #- '42674:42674/tcp' # Uncomment to enable TacView Real-time Telemetry if in use - TCP only.
-      #- '42675:42675/tcp' # Uncomment to enable TacView Remote Control if in use - TCP only.
-
-      # DCS SimpleRadio Standalone (DCS-SRS) ports
-      #- '5002:5002/tcp' # Uncomment to enable DCS SimpleRadio Standalone (DCS-SRS) - TCP and UDP.
-      #- '5002:5002/udp' # Uncomment to enable DCS SimpleRadio Standalone (DCS-SRS) - TCP and UDP.      
+      - '10308:10308/udp' # Multiplayer game traffic - UDP.
+      - '10309:10309/tcp' # Multiplayer game VOIP traffic - TCP.
+      - '10309:10309/udp' # Multiplayer game VOIP traffic - UDP.
     volumes:
       - '${HOME}/ddcs4:/config/'
-    # Setting seccomp to unconfined with security_opt is necessary if you encounter 'Failed to execute child process "bash": Failed to fdwalk: Operation not permitted' errors.
-    # You should not unconfine unless necessary.
-    # See also: https://docs.linuxserver.io/images/docker-webtop/#application-setup
+      - '${HOME}/DDCS:/config/DDCS'
     security_opt:
-      - seccomp=unconfined
+      - seccomp:unconfined
     restart: always
-    image: afinegan/ddcs4:latest
+    image: afinegan/ddcs4-dcs:latest
     networks:
       - db_shared_network
 
-  mongodb:
+  ddcs4-mongodb:
     container_name: ddcs4-mongodb
     environment:
-      MONGO_INITDB_ROOT_USERNAME: $MONGO_INITDB_ROOT_USERNAME
-      MONGO_INITDB_ROOT_PASSWORD: $MONGO_INITDB_ROOT_PASSWORD
+      - MONGO_INITDB_ROOT_USERNAME=$MONGO_INITDB_ROOT_USERNAME
+      - MONGO_INITDB_ROOT_PASSWORD=$MONGO_INITDB_ROOT_PASSWORD
     ports:
       - "27017:27017"
+    command: ["mongod", "--config", "/etc/mongod.conf"]
     volumes:
       - '${HOME}/ddcs4/mongodb:/data/db'
+      - './mongod.conf:/etc/mongod.conf'
+      - '${HOME}/ddcs4/mongodb/logs:/var/log/mongodb'
     restart: always
     image: mongo
     networks:
       - db_shared_network
+  
+  ddcs4-node:
+    depends_on:
+      - ddcs4-mongodb
+    container_name: ddcs4-node
+    environment:
+      - HOME=/config
+      - PM2_HOME=/config/.pm2
+    volumes:
+      - '${HOME}/ddcs4:/config/'
+      - './.env.config:/app/DDCS/config/.env'
+    restart: always
+    image: afinegan/ddcs4-node:latest
+    networks:
+      - db_shared_network      
 
 networks:
   db_shared_network:
+
