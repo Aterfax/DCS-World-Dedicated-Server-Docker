@@ -25,11 +25,17 @@ lsiown -R abc:users /config/.cache
 
 sudo -u abc winecfg
 
+# Add required DLL overrides
+echo "Installing Wine DLL overrides"
+sudo -u abc /usr/bin/wine reg add 'HKCU\Software\Wine\DllOverrides' /v wbemprox /t REG_SZ /d 'native' /f
+
 # Install the wine dependencies.
 # Note that this will not reinstall the dependencies if they are already installed.
 sudo -u abc /usr/bin/winetricks --unattended d3dcompiler_43 
 sudo -u abc /usr/bin/winetricks --unattended d3dx11_43 
 sudo -u abc /usr/bin/winetricks --unattended d3dcompiler_47 
 sudo -u abc /usr/bin/winetricks --unattended win10 
-echo "Exiting" 
+
+echo "Wine installations complete, Exiting." 
+
 exit 0
