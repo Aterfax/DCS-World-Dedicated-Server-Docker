@@ -39,11 +39,14 @@ download_dcs_server() {
 # Enable immediate exit on error
 set -e
 
-URL="https://www.digitalcombatsimulator.com/upload/iblock/17c/slq6u1srmqqi1fb2oaofz1qx6vc5p2fh/DCS_World_Server_modular.exe"
+# Source the helper function - this will populate the variable $MODULAR_SERVER_DL_URL and $MODULAR_SERVER_MD5SUM
+source /app/dcs_server/get_dl_link
+
+URL="${MODULAR_SERVER_DL_URL}"
 DOWNLOAD_PATH="/config/DCS_World_Server_modular.exe"
 
 # Note that this method of grabbing the MD5 checksum is fairly brittle!
-MD5SUM=$(curl -s "https://www.digitalcombatsimulator.com/en/downloads/world/server/" | grep -o 'MD5:</b> [a-f0-9]\+' | awk '{print $2}')
+MD5SUM="${MODULAR_SERVER_MD5SUM}"
 DOWNLOADED_MD5SUM=$(md5sum "$DOWNLOAD_PATH" | awk '{print $1}')
 
 echo -e "Downloading DCS Server install executable if required: " 
