@@ -39,7 +39,7 @@ download_dcs_server() {
 # Enable immediate exit on error
 set -e
 
-URL="https://www.digitalcombatsimulator.com/upload/iblock/540/sv8uwi1voityg96r101mw7x45der1w41/DCS_World_Server_modular.exe"
+URL="https://www.digitalcombatsimulator.com/upload/iblock/17c/slq6u1srmqqi1fb2oaofz1qx6vc5p2fh/DCS_World_Server_modular.exe"
 DOWNLOAD_PATH="/config/DCS_World_Server_modular.exe"
 
 # Note that this method of grabbing the MD5 checksum is fairly brittle!
