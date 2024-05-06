@@ -50,8 +50,8 @@ startup_iterator=1
 pid=""
     if [ $startup_iterator -eq 1 ]; then
         DCS_Misson_scripting_lua_path="${DCS_install_dir_release}/Scripts/MissionScripting.lua"
-        echo "Deactivating sanitizeModule"
         if [ -f "$DCS_Misson_scripting_lua_path" ]; then
+            echo "Deactivating sanitizeModule"
             sed -i "s/sanitizeModule('os')//g" "$DCS_Misson_scripting_lua_path"
             sed -i "s/sanitizeModule('io')//g" "$DCS_Misson_scripting_lua_path"
             sed -i "s/sanitizeModule('lfs')//g" "$DCS_Misson_scripting_lua_path"
@@ -60,7 +60,11 @@ pid=""
             sed -i "s/_G\['package'\] = nil//g" "$DCS_Misson_scripting_lua_path"
         fi
 
-        ln -s "/config/DDCS/missions" "/config/.wine/drive_c/users/abc/Saved Games/DCS.release_server/bubbleMaps"
+        DDCS_BubbleMaps_Path="/config/.wine/drive_c/users/abc/Saved Games/DCS.release_server/bubbleMaps"
+        if [ ! -d "$DDCS_BubbleMaps_Path" ]; then
+          echo "Creating Symbolic Linked BubbleMaps"
+          ln -s "/config/DDCS/missions" DDCS_BubbleMaps_Path
+        fi
 
         echo "Starting DCS Server" 
         sudo -E -u abc wine "${DCS_install_dir_release}/bin/DCS_server.exe" &
