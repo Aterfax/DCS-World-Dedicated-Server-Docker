@@ -55,9 +55,9 @@ pid=""
             sed -i "s/sanitizeModule('os')//g" "$DCS_Misson_scripting_lua_path"
             sed -i "s/sanitizeModule('io')//g" "$DCS_Misson_scripting_lua_path"
             sed -i "s/sanitizeModule('lfs')//g" "$DCS_Misson_scripting_lua_path"
-            sed -i "s/_G['require'] = nil//g" "$DCS_Misson_scripting_lua_path"
-            sed -i "s/_G['loadlib'] = nil//g" "$DCS_Misson_scripting_lua_path"
-            sed -i "s/_G['package'] = nil//g" "$DCS_Misson_scripting_lua_path"
+            sed -i "s/_G\['require'\] = nil//g" "$DCS_Misson_scripting_lua_path"
+            sed -i "s/_G\['loadlib'\] = nil//g" "$DCS_Misson_scripting_lua_path"
+            sed -i "s/_G\['package'\] = nil//g" "$DCS_Misson_scripting_lua_path"
         fi
 
         ln -s "/config/DDCS/missions" "/config/.wine/drive_c/users/abc/Saved Games/DCS.release_server/bubbleMaps"
