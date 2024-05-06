@@ -57,7 +57,8 @@ pid=""
             sed -i "s/sanitizeModule('lfs')/--sanitizeModule('lfs')/g" "$DCS_Misson_scripting_lua_path"
         fi
 
-        ln -s /config/DDCS/missions /config/.wine/drive_c/users/abc/Saved Games/DCS.release_server/bubbleMaps
+       missions_path="/config/DDCS/missions"
+        ln -s missions_path "${DCS_saved_games_dir_release}/bubbleMaps"
 
         echo "Starting DCS Server" 
         sudo -E -u abc wine "${DCS_install_dir_release}/bin/DCS_server.exe" &
