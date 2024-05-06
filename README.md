@@ -135,6 +135,9 @@ To use this docker mod, two variables must be added to your docker compose file:
 
 And you must set the ``ENABLE_DCS_RETRIBUTION=1`` in your ``.env`` file.
 
+Please note, that using DCS Retribution requires that several higher risk methods are made available to make persistence between missions work. These methods can then be invoked by any script that your missions run. This means 
+that an attacker could use a mission file to execute arbitrary code on your server, read or write arbitrary data, erase your server etc... Please take care to only run missions from trusted sources.
+
 An example compose file is also provided: [docker-compose/Dedicated-Server-DockerMod-Retribution](docker-compose/Dedicated-Server-DockerMod-Retribution/).
 
 The Dockerfile for this mod can be found at:  [docker/Dockerfile.DockerMod.dcs-retribution](docker/Dockerfile.DockerMod.dcs-retribution)
