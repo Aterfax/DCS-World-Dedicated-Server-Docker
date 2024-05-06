@@ -25,7 +25,6 @@ services:
       - '10309:10309/tcp' # Multiplayer game VOIP traffic - TCP.
       - '10309:10309/udp' # Multiplayer game VOIP traffic - UDP.
     volumes:
-      - '${HOME}/ddcs4:/config/'
       - '${HOME}/DDCS:/config/DDCS'
     security_opt:
       - seccomp:unconfined
@@ -50,7 +49,7 @@ services:
     image: mongo
     networks:
       - db_shared_network
-  
+
   ddcs4-node:
     depends_on:
       - ddcs4-mongodb
@@ -59,13 +58,12 @@ services:
       - HOME=/config
       - PM2_HOME=/config/.pm2
     volumes:
-      - '${HOME}/ddcs4:/config/'
-      - './.env.config:/app/DDCS/config/.env'
+      - '${HOME}:/app'
+      - '.env.config:/app/DDCS/config/.env'
     restart: always
     image: afinegan/ddcs4-node:latest
     networks:
-      - db_shared_network      
+      - db_shared_network
 
 networks:
   db_shared_network:
-
