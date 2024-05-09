@@ -5,6 +5,7 @@ services:
       - ddcs4-mongodb
       - ddcs4-node
     container_name: ddcs4-dcs
+    platform: linux/amd64
     hostname: dynamicdcs.com
     environment:
       - DDCSSERVER=1
@@ -36,6 +37,7 @@ services:
 
   ddcs4-mongodb:
     container_name: ddcs4-mongodb
+    platform: linux/amd64
     environment:
       - MONGO_INITDB_ROOT_USERNAME=$MONGO_INITDB_ROOT_USERNAME
       - MONGO_INITDB_ROOT_PASSWORD=$MONGO_INITDB_ROOT_PASSWORD
@@ -56,6 +58,7 @@ services:
     depends_on:
       - ddcs4-mongodb
     container_name: ddcs4-node
+    platform: linux/amd64
     environment:
       - HOME=/config
       - PM2_HOME=/config/.pm2
