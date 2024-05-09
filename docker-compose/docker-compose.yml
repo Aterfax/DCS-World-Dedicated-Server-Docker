@@ -51,7 +51,7 @@ services:
     image: mongo:latest
     networks:
       - db_shared_network
-  
+
   ddcs4-node:
     depends_on:
       - ddcs4-mongodb
@@ -66,8 +66,7 @@ services:
     restart: always
     image: afinegan/ddcs4-node:latest
     networks:
-      - db_shared_network      
+      - db_shared_network
 
 networks:
   db_shared_network:
-
