@@ -25,8 +25,8 @@ services:
       - '10309:10309/tcp' # Multiplayer game VOIP traffic - TCP.
       - '10309:10309/udp' # Multiplayer game VOIP traffic - UDP.
     volumes:
-      - '${HOME}/ddcs4:/config/'
       - '${HOME}/DDCS:/config/DDCS'
+      - '/var/run/docker.sock:/var/run/docker.sock'
     security_opt:
       - seccomp:unconfined
     restart: always
@@ -46,8 +46,9 @@ services:
       - '${HOME}/ddcs4/mongodb:/data/db'
       - './mongod.conf:/etc/mongod.conf'
       - '${HOME}/ddcs4/mongodb/logs:/var/log/mongodb'
+      - '/var/run/docker.sock:/var/run/docker.sock'
     restart: always
-    image: mongo
+    image: mongo:latest
     networks:
       - db_shared_network
   
@@ -59,8 +60,9 @@ services:
       - HOME=/config
       - PM2_HOME=/config/.pm2
     volumes:
-      - '${HOME}/ddcs4:/config/'
-      - './.env.config:/app/DDCS/config/.env'
+      - '${HOME}:/app'
+      - '.env.config:/app/DDCS/config/.env'
+      - '/var/run/docker.sock:/var/run/docker.sock'
     restart: always
     image: afinegan/ddcs4-node:latest
     networks:
