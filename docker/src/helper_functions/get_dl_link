@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# shellcheck shell=bash
+
+DOMAIN_ROOT="https://www.digitalcombatsimulator.com"
+DL_PAGE="${DOMAIN_ROOT}/en/downloads/world/server/"
+MODULAR_SERVER_DL_URL=${DOMAIN_ROOT}$(curl -s ${DL_PAGE} | grep 'DCS_World_Server_modular.exe' | grep -Po '(?<=href=")[^"]*')
+MODULAR_SERVER_MD5SUM=$(curl -s "$DL_PAGE" | grep -o 'MD5:</b> [a-f0-9]\+' | awk '{print $2}')
+
+# Check if the download URL is empty (no match found)
+if [[ -z "$MODULAR_SERVER_DL_URL" ]]; then
+  echo "Error: Could not find DCS_World_Server_modular.exe on download page."
+  exit 1
+fi
+
+# Check the response of the download URL for a valid endpoint
+RESPONSE=$(curl -fsSI "$MODULAR_SERVER_DL_URL")
+echo "$RESPONSE" | grep -q 'HTTP/2 200'
+
+if [[ $? -ne 0 ]]; then
+  echo "Error: Download URL might be invalid or unreachable."
+  exit 1
+fi
+
+# Also check for the presence of the expected MIME type (optional)
+EXPECTED_MIME_TYPE="application/octet-stream"
+MIME_TYPE=$(echo "$RESPONSE" | grep -i 'Content-Type:' | cut -d':' -f2 | tr -d '[:space:]')
+
+if [[ -n "$EXPECTED_MIME_TYPE" && "$MIME_TYPE" != "$EXPECTED_MIME_TYPE" ]]; then
+  echo "Warning: Downloaded content is not be the expected type ($EXPECTED_MIME_TYPE)."
+  exit 1
+else
+  echo "Modular server download link seems valid. Proceeding..."
+fi
+
+export MODULAR_SERVER_DL_URL="${MODULAR_SERVER_DL_URL}"
+export MODULAR_SERVER_MD5SUM="${MODULAR_SERVER_MD5SUM}"

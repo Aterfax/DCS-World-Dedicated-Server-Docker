@@ -21,6 +21,9 @@ jobs:
       - name: Force permissions fix.
         run: sudo apt-get update && sudo apt-get install dos2unix -y && cd docker && bash dos2unix.sh
 
+      - name: Check DL link still working.
+        run: source docker/src/helper_functions/get_dl_link
+
       - name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@v3
