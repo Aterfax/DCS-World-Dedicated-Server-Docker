@@ -22,7 +22,7 @@ WINE_user_saved_game_dir="/config/.wine/drive_c/users/abc/Saved Games"
 WINE_program_files_dir="/config/.wine/drive_c/Program Files"
 
 # Path variables actually checked
-DCS_saved_games_dir_open_beta="${WINE_user_saved_game_dir}/DCS.server"
+DCS_saved_games_dir_open_beta="${WINE_user_saved_game_dir}/DCS.openbeta_server"
 DCS_saved_games_dir_release="${WINE_user_saved_game_dir}/DCS.server"
 DCS_install_dir_openbeta="${WINE_program_files_dir}/Eagle Dynamics/DCS World OpenBeta Server"
 DCS_install_dir_release="${WINE_program_files_dir}/Eagle Dynamics/DCS World Server"
