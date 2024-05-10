@@ -60,7 +60,7 @@ pid=""
             sed -i "s/_G\['package'\] = nil//g" "$DCS_Misson_scripting_lua_path"
         fi
 
-        DDCS_BubbleMaps_Path="/config/.wine/drive_c/users/abc/Saved Games/DCS.release_server/bubbleMaps"
+        DDCS_BubbleMaps_Path="/config/.wine/drive_c/users/abc/Saved Games/DCS.server/bubbleMaps"
         if [ ! -d "$DDCS_BubbleMaps_Path" ]; then
           echo "Creating Symbolic Linked BubbleMaps"
           ln -s "/config/DDCS/missions" "$DDCS_BubbleMaps_Path"
