@@ -17,6 +17,7 @@ trap handle_error ERR
 # This sets the following variables:
 # DCS_saved_games_dir_open_beta
 # DCS_saved_games_dir_release
+# DCS_saved_games_dir_current
 # DCS_install_dir_openbeta
 # DCS_install_dir_release
 source /app/dcs_server/find_dcs_dirs_function
@@ -31,16 +32,19 @@ if [ "$AUTOSTART" -ne 1 ]; then
     exit 1
 fi
 
-network_vault_path="${DCS_saved_games_dir_release}/Config/network.vault"
+network_vault_path="${DCS_saved_games_dir_current}/Config/network.vault"
 if [ ! -f "$network_vault_path" ]; then
-    echo "Error: File '$network_vault_path' does not exist. Cannot autostart without user logging in and saving credentials for autologin. Exiting." 
+    MSG="Error: File '$network_vault_path' does not exist. Cannot autostart without user logging in and saving credentials for autologin. Exiting." 
+    echo -e "${MSG}"
+    /app/dcs_server/display_GUI_warning_function "$MSG"
     sleep $TIMEOUT
     exit 1
 fi
 
-install_folder_path="/config/.wine/drive_c/Program Files/Eagle Dynamics"
-if [ ! -d "$install_folder_path" ]; then
-    echo "No installation detected. Cannot autostart. Exiting" 
+if [ ! -d "${DCS_install_dir_release}" ]; then
+    MSG="No installation detected. Cannot autostart. Exiting" 
+    echo -e "${MSG}"
+    /app/dcs_server/display_GUI_warning_function "$MSG"
     sleep $TIMEOUT
     exit 1
 fi

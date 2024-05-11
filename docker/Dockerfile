@@ -7,7 +7,7 @@ FROM lscr.io/linuxserver/webtop:latest
 LABEL maintainer="Aterfax"
 
 # Wine 64Bit for running EXE
-RUN apk add --no-cache wine freetype wget cabextract xdotool xdg-utils xvfb xvfb-run git python3 python3-dev py3-pip 7zip make cmake gcc g++ gfortran innoextract build-base linux-headers
+RUN apk add --no-cache wine freetype wget cabextract xdotool xdg-utils xvfb xvfb-run git python3 python3-dev py3-pip 7zip make cmake gcc g++ gfortran innoextract grep build-base linux-headers
 
 # Download the latest winetricks script (master="latest version") from Github.
 RUN wget https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks && chmod +x winetricks
@@ -45,6 +45,12 @@ RUN chmod +x -R /app/dcs_server/logger_function
 
 COPY ./src/helper_functions/find_dcs_dirs_function /app/dcs_server/find_dcs_dirs_function
 RUN chmod +x -R /app/dcs_server/find_dcs_dirs_function
+
+COPY ./src/helper_functions/display_GUI_warning_function /app/dcs_server/display_GUI_warning_function
+RUN chmod +x -R /app/dcs_server/display_GUI_warning_function
+
+COPY ./src/helper_functions/get_dl_link /app/dcs_server/get_dl_link
+RUN chmod +x -R /app/dcs_server/get_dl_link
 
 # Add branding here to avoid it getting split into pieces in the output.
 COPY ./src/branding /etc/s6-overlay/s6-rc.d/init-adduser/branding2

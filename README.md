@@ -75,7 +75,7 @@ Various automations and helper scripts are provided. In depth configuration and 
 
 After installation is complete, you can configure your server as you would do so typically, editing configuration or adding missions etc... at to the following path (which you can also open from the ``DCS Saved Games Dir`` desktop shortcut):
 
-    "/config/.wine/drive_c/users/abc/Saved Games/DCS.release_server/"
+    "/config/.wine/drive_c/users/abc/Saved Games/DCS.server/"
 
 **Hint:** you can open the DCS WebGUI in the browser by using the ``Open DCS Server WebGUI`` desktop shortcut.
 
@@ -134,6 +134,9 @@ To use this docker mod, two variables must be added to your docker compose file:
     - DOCKER_MODS=aterfax/dcs-world-dedicated-server-mod-retribution:latest
 
 And you must set the ``ENABLE_DCS_RETRIBUTION=1`` in your ``.env`` file.
+
+Please note, that using DCS Retribution requires that several higher risk methods are made available to make persistence between missions work. These methods can then be invoked by any script that your missions run. This means 
+that an attacker could use a mission file to execute arbitrary code on your server, read or write arbitrary data, erase your server etc... Please take care to only run missions from trusted sources.
 
 An example compose file is also provided: [docker-compose/Dedicated-Server-DockerMod-Retribution](docker-compose/Dedicated-Server-DockerMod-Retribution/).
 
