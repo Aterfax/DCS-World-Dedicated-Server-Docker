@@ -51,9 +51,11 @@ if [[ "$DCS_saved_games_dir_current_presence_boolean" == false  ]]; then
     fi
 
     if [[ "$DCS_saved_games_dir_open_beta_presence_boolean" == true && "$DCS_saved_games_dir_release_presence_boolean" == true  ]]; then
-        echo "'Open Beta' saved games and 'Release' saved games folder detected concurrently. User intervention required."
-        echo "Please ensure you move your older 'Open Beta' or 'Release' saved games folder to the newer current folder: ${DCS_saved_games_dir_current}"
-        echo "Please check why the both 'Release' and 'Open Beta' folders exist before blindly overwriting!"
+        MSG="'Open Beta' saved games and 'Release' saved games folder detected concurrently. User intervention required.\n"
+        MSG+="Please ensure you move your older 'Open Beta' or 'Release' saved games folder to the newer current folder: ${DCS_saved_games_dir_current}\n"
+        MSG+="Please check why the both 'Release' and 'Open Beta' folders exist before blindly overwriting!"
+        echo -e "${MSG}"
+        /app/dcs_server/display_GUI_warning_function "$MSG"
         exit 1
     fi
 
@@ -70,9 +72,11 @@ if [[ "$DCS_install_dir_openbeta_presence_boolean" == true ]]; then
         echo "Folder move complete."
     fi
     if [[ "$DCS_install_dir_release_presence_boolean" == true ]]; then
-        echo "'Open Beta' installation and 'Release' installation folder detected together. User intervention required."
-        echo "Please ensure you move your older 'Open Beta' installation to the newer 'Release' folder: ${DCS_install_dir_release}"
-        echo "Please check why the newer 'Release' folder exists at the same time as the old 'Open Beta' before blindly overwriting!"
+        MSG="'Open Beta' installation and 'Release' installation folder detected together. User intervention required.\n"
+        MSG+="Please ensure you move your older 'Open Beta' installation to the newer 'Release' folder: ${DCS_install_dir_release}\n"
+        MSG+="Please check why the newer 'Release' folder exists at the same time as the old 'Open Beta' before blindly overwriting!"
+        echo -e "${MSG}"
+        /app/dcs_server/display_GUI_warning_function "$MSG"
         exit 1
     fi
 fi

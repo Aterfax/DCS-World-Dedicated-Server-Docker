@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# shellcheck shell=bash
+
+# This script is invoked to pop a warning message into the GUI environment in the event of errors 
+# stopping the container.
+MESSAGE=$(echo $1  | sed 's/\\n/\\n\\n/g') # Double the number of newlines!
+export MESSAGE="${MESSAGE}"
+
+# Note we want to run this as the container user, not root.
+# By sending to the background with & , also nohup and redirecting output to /dev/null, 
+# the xterm command will run in the background independently of the parent shell and 
+# won't block or interfere with the s6 parent process or its logging output.
+sudo -E -u abc bash <<'EOF' &
+export DISPLAY=:1.0
+
+nohup xterm -geometry 112x31+100+100 -e '
+    echo -e "${MESSAGE}";
+    echo -n "Press Enter to continue...";
+    read enter_key;  # Wait for the user to press Enter
+' >/dev/null 2>&1 &
+EOF

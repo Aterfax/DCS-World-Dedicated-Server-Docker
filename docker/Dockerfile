@@ -46,6 +46,9 @@ RUN chmod +x -R /app/dcs_server/logger_function
 COPY ./src/helper_functions/find_dcs_dirs_function /app/dcs_server/find_dcs_dirs_function
 RUN chmod +x -R /app/dcs_server/find_dcs_dirs_function
 
+COPY ./src/helper_functions/display_GUI_warning_function /app/dcs_server/display_GUI_warning_function
+RUN chmod +x -R /app/dcs_server/display_GUI_warning_function
+
 COPY ./src/helper_functions/get_dl_link /app/dcs_server/get_dl_link
 RUN chmod +x -R /app/dcs_server/get_dl_link
 
