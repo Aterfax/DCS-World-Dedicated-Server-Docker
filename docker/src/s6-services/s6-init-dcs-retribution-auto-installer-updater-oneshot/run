@@ -28,14 +28,15 @@ fi
 # WINE_program_files_dir="/config/.wine/drive_c/Program Files"
 # DCS_saved_games_dir_open_beta
 # DCS_saved_games_dir_release
+# DCS_saved_games_dir_current
 # DCS_install_dir_openbeta
 # DCS_install_dir_release
 # DCS_bin_dir_openbeta
 # DCS_bin_dir_release
 source /app/dcs_server/find_dcs_dirs_function
 
-[ -d "${DCS_saved_games_dir_release}/Missions" ] || sudo -E -u abc mkdir -p "${DCS_saved_games_dir_release}/Missions"
-[ -d "${DCS_saved_games_dir_release}/MissionEditor/UnitPayloads" ] || sudo -E -u abc mkdir -p "${DCS_saved_games_dir_release}/MissionEditor/UnitPayloads"
+[ -d "${DCS_saved_games_dir_current}/Missions" ] || sudo -E -u abc mkdir -p "${DCS_saved_games_dir_current}/Missions"
+[ -d "${DCS_saved_games_dir_current}/MissionEditor/UnitPayloads" ] || sudo -E -u abc mkdir -p "${DCS_saved_games_dir_current}/MissionEditor/UnitPayloads"
 
 echo "Installing DCS Retribution"
 
@@ -73,9 +74,9 @@ if [ ! -f "$Retribution_cfg_file_path" ]; then
     # Generate retribution_preferences.json using heredoc
     sudo -E -u abc cat <<EOF > "$Retribution_cfg_file_path"
 {
-    "saved_game_dir": "$(convert_path "$DCS_saved_games_dir_release")",
+    "saved_game_dir": "$(convert_path "$DCS_saved_games_dir_current")",
     "dcs_install_dir": "$(convert_path "$DCS_install_dir_release")",
-    "last_save_file": "$(convert_path "$DCS_saved_games_dir_release")/Retribution/Saves/initialsave.retribution",
+    "last_save_file": "$(convert_path "$DCS_saved_games_dir_current")/Retribution/Saves/initialsave.retribution",
     "ignore_empty_install_directory": false,
     "prefer_liberation_payloads": false,
     "server_port": 16880

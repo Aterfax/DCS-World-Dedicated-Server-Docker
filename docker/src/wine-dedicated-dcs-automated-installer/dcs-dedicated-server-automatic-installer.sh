@@ -5,6 +5,7 @@
 # This sets the following variables:
 # DCS_saved_games_dir_open_beta
 # DCS_saved_games_dir_release
+# DCS_saved_games_dir_current
 # DCS_install_dir_openbeta
 # DCS_install_dir_release
 source /app/dcs_server/find_dcs_dirs_function
@@ -81,7 +82,7 @@ create_desktop_shortcut "/app/dcs_server/wine-dedicated-dcs-automated-installer/
                         "Run DCS Module Installer" \
                         "true"
 
-create_desktop_shortcut "xdg-open \"${DCS_saved_games_dir_release}/\""\
+create_desktop_shortcut "xdg-open \"${DCS_saved_games_dir_current}/\""\
                         "folder-wine" \
                         "DCS Saved Games Dir" \
                         "false"
