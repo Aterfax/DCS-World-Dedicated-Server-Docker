@@ -4,6 +4,7 @@
 # This sets the following variables:
 # DCS_saved_games_dir_open_beta
 # DCS_saved_games_dir_release
+# DCS_saved_games_dir_current
 # DCS_install_dir_openbeta
 # DCS_install_dir_release
 source /app/dcs_server/find_dcs_dirs_function
@@ -52,6 +53,7 @@ Syria,SYRIA_terrain
 Mariana Islands,MARIANAISLANDS_terrain
 South Atlantic,FALKLANDS_terrain
 Sinai,SINAIMAP_terrain
+Kola,KOLA_terrain
 "
 
 # Convert the CSV data into an array

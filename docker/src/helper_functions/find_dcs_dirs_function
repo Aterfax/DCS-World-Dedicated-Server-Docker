@@ -7,6 +7,7 @@
 # Saved Games dirs
 # From: "/config/.wine/drive_c/users/abc/Saved Games/DCS.openbeta_server"
 # To: "/config/.wine/drive_c/users/abc/Saved Games/DCS.release_server/"
+# They subsequently changed (without mentioning it) to: "/config/.wine/drive_c/users/abc/Saved Games/DCS.server/"
 #
 # Installation folder
 # From: "/config/.wine/drive_c/Program Files/Eagle Dynamics/DCS World OpenBeta Server"
@@ -24,6 +25,7 @@ WINE_program_files_dir="/config/.wine/drive_c/Program Files"
 # Path variables actually checked
 DCS_saved_games_dir_open_beta="${WINE_user_saved_game_dir}/DCS.openbeta_server"
 DCS_saved_games_dir_release="${WINE_user_saved_game_dir}/DCS.release_server"
+DCS_saved_games_dir_current="${WINE_user_saved_game_dir}/DCS.server"
 DCS_install_dir_openbeta="${WINE_program_files_dir}/Eagle Dynamics/DCS World OpenBeta Server"
 DCS_install_dir_release="${WINE_program_files_dir}/Eagle Dynamics/DCS World Server"
 
@@ -42,6 +44,12 @@ if [[ -d "$DCS_saved_games_dir_release" ]]; then
     DCS_saved_games_dir_release_presence_boolean=true
 else
     DCS_saved_games_dir_release_presence_boolean=false
+fi
+
+if [[ -d "$DCS_saved_games_dir_current" ]]; then
+    DCS_saved_games_dir_current_presence_boolean=true
+else
+    DCS_saved_games_dir_current_presence_boolean=false
 fi
 
 # Check if Installation folders exist
