@@ -9,6 +9,7 @@ FROM busybox AS buildstage
 RUN mkdir -p /root-layer/etc/s6-overlay/s6-rc.d/user/contents.d/
 
 # Add the s6 scripting / helper functions for DCSServerBot auto install and update.
+COPY ./src/helper_functions/create_desktop_shortcut_function /root-layer/app/dcs_server/create_desktop_shortcut_function
 COPY ./src/s6-services/s6-init-dcssb-auto-installer-updater-oneshot /root-layer/etc/s6-overlay/s6-rc.d/init-dcssb-auto-installer-updater-oneshot
 RUN touch /root-layer/etc/s6-overlay/s6-rc.d/user/contents.d/init-dcssb-auto-installer-updater-oneshot
 

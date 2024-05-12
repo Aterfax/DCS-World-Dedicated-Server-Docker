@@ -142,6 +142,57 @@ An example compose file is also provided: [docker-compose/Dedicated-Server-Docke
 
 The Dockerfile for this mod can be found at:  [docker/Dockerfile.DockerMod.dcs-retribution](docker/Dockerfile.DockerMod.dcs-retribution)
 
+### DCSServerbot
+
+[DCSServerBot](https://github.com/Special-K-s-Flightsim-Bots/DCSServerBot) is a Discord bot which lets you administrate your DCS server instances via Discord slash-commands.
+It has built in per-server and per-user statistics, optional cloud-based statistics, Coalitions-support and much more! With its plugin system and reporting framework, DCSServerBot 
+can be enhanced very easily to support whatever might come into your mind. DCSServerBot is a solution for DCS server admins built by a DCS server admin.
+
+This docker mod enables automatic installation and update of the DCSServerBot files within the container as well as automatic start up. The server administrator will still need to follow
+the installation instructions provided within the DCSServerBot README to establish the correct setup with Discord and the DCS server within the container: 
+https://github.com/Special-K-s-Flightsim-Bots/DCSServerBot?tab=readme-ov-file#installation
+
+**Please read these instructions wholly and carefully before attempting to use this Docker mod.**
+
+To use this docker mod, three variables must be added to your docker compose file (set in the [example docker-compose file](docker-compose/Dedicated-Server-DockerMod-dcsserverbot/docker-compose.yml)):
+
+    - DCSSBAUTOINSTALL=${DCSSBAUTOINSTALL:-0}
+    - DCSSBAUTOSTART=${DCSSBAUTOSTART:-0}
+    - DOCKER_MODS=aterfax/dcs-world-dedicated-server-mod-dcsserverbot:latest
+
+With the configurable values provided in your ``.env`` file as:
+
+    - DCSSBAUTOINSTALL=1
+    - DCSSBAUTOSTART=0
+
+The DCSServerBot setup steps can then be started manually with the "Setup DCSServerBot" shortcut from the desktop. Follow the on screen instructions 
+and supply the details required.
+
+After setup and installation is complete, ``DCSSBAUTOSTART=1`` can be set to enable the autostart.
+
+The "Run DCSServerBot" shortcut can then be used to start DCSServerBot, or used if you have the autostart disabled.
+
+As DCSServerBot requires a PostgreSQL database the provided [example docker-compose file](docker-compose/Dedicated-Server-DockerMod-dcsserverbot/docker-compose.yml) also 
+stands up sidecar [postgres](https://hub.docker.com/_/postgres) and [Adminer (formerly phpMyAdmin)](https://hub.docker.com/_/adminer/) containers which can be accessed 
+via their hostnames, ``postgres`` and ``adminer``.
+
+If using the provided example ``.env`` and docker-compose file, please amend the ``POSTGRES_PASSWORD`` to something sensible and during the DCSServerBot installation process, you 
+would use ``postgres`` as the hostname and ``DCSServerBot`` as the username and database name.
+
+As DCSServerbot handles automatic start of the DCS Server as part of its functionality, you should disable the container's identical functionality by
+amending the ``AUTOSTART`` environment variable to ``AUTOSTART=0`` in your chosen ``.env`` file.
+
+The native container autoupdate functionality does not interfere with the same functionality from DCSServerbot.
+
+If you encounter an error when starting DCSServerBot that Python.exe is not found on the $PATH, please try repairing or removing and reinstalling Python
+manually via the executable provided in ``/config/``. You can do so by opening a terminal and running ``wine /config/python-3.11.6-amd64.exe``.
+
+If you need to clean up and reinstall the Python environment (venv) that DCSServerBot uses (e.g. if DCSServerbot fails to start), you can open 
+the "DCSServerbot Dir" shortcut, right click to start a terminal then run the command ``wine cleanup.cmd``. When this finishes, 
+you can run ``wine install.cmd``.
+
+The Dockerfile for this mod can be found at:  [docker/Dockerfile.DockerMod.dcsserverbot](docker/Dockerfile.DockerMod.dcsserverbot)
+
 ## FAQ
 
 ### Which user am I within the container?

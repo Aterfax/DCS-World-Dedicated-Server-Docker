@@ -83,6 +83,24 @@ else
     # Directory doesn't exist, call the function to clone the Git repository
     echo "Installing DCSSB."
     clone_git_repo "$repo_url" "$repo_dir"
+
+    source /app/dcs_server/create_desktop_shortcut_function
+    create_desktop_shortcut "wine run.cmd" \
+                        "/etc/s6-overlay/s6-rc.d/init-dcssb-auto-installer-updater-oneshot/dcssb.png" \
+                        "Run DCSServerBot" \
+                        "true" \
+                        "/config/.wine/drive_c/users/abc/DCSServerBot/"
+                        
+    create_desktop_shortcut "wine install.cmd" \
+                        "/etc/s6-overlay/s6-rc.d/init-dcssb-auto-installer-updater-oneshot/dcssb.png" \
+                        "Setup DCSServerBot" \
+                        "true" \
+                        "/config/.wine/drive_c/users/abc/DCSServerBot/"
+
+    create_desktop_shortcut "xdg-open /config/.wine/drive_c/users/abc/DCSServerBot"\
+                        "folder-wine" \
+                        "DCSServerBot Dir" \
+                        "false"
 fi
 
 # Now ensure that Python is installed.
@@ -125,8 +143,6 @@ download_python() {
 
 # Call the function
 download_python
-
-
 EOF
 
 exit 0
