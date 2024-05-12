@@ -34,7 +34,9 @@ fi
 
 dcs_lock_file="${DCS_saved_games_dir_current}/dcs.lock"
 if [ -f "$dcs_lock_file" ]; then
-    echo "Error: File '$dcs_lock_file' is present. Server is already running or lockfile must be manually removed by user. Cannot autostart. Exiting." 
+    MSG="Error: File '$dcs_lock_file' is present. Server is already running or lockfile must be manually removed by user. Cannot autostart. Exiting." 
+    echo -e "${MSG}"
+    /app/dcs_server/display_GUI_warning_function "$MSG"
     sleep $TIMEOUT
     exit 1
 fi
