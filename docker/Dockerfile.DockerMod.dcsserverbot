@@ -1,0 +1,26 @@
+#
+# DCS-World-Dedicated-Server-Docker-Mod-DCSServerBot Dockerfile.
+# aterfax/dcs-world-dedicated-server-mod-dcsserverbot
+#
+# We need busybox or we have no shell commands.
+FROM busybox AS buildstage
+
+# Ensure the s6 user contents.d folder exists prior to touch
+RUN mkdir -p /root-layer/etc/s6-overlay/s6-rc.d/user/contents.d/
+
+# Add the s6 scripting / helper functions for DCSServerBot auto install and update.
+COPY ./src/helper_functions/create_desktop_shortcut_function /root-layer/app/dcs_server/create_desktop_shortcut_function
+COPY ./src/s6-services/s6-init-dcssb-auto-installer-updater-oneshot /root-layer/etc/s6-overlay/s6-rc.d/init-dcssb-auto-installer-updater-oneshot
+RUN touch /root-layer/etc/s6-overlay/s6-rc.d/user/contents.d/init-dcssb-auto-installer-updater-oneshot
+
+# Add start dependency to server autostart to ensure DCSServerBot is installed before start.    
+COPY ./src/s6-services/s6-init-dcssb-auto-start-longrun /root-layer/etc/s6-overlay/s6-rc.d/init-dcssb-auto-start-longrun
+RUN touch /root-layer/etc/s6-overlay/s6-rc.d/user/contents.d/init-dcssb-auto-start-longrun
+    
+FROM scratch
+LABEL maintainer="Aterfax"
+
+# Add files from buildstage - note you can only run a single command here.
+# Subsequent COPY commands will add new layers which will be ignored by
+# the container.
+COPY --from=buildstage /root-layer/ /

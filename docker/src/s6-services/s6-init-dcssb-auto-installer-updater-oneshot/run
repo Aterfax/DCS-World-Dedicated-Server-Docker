@@ -1,0 +1,148 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash
+
+# Source the log helper after setting the prefix
+log_prefix="s6-init-dcssb-auto-installer-updater-oneshot"
+source /app/dcs_server/logger_function
+
+handle_error() {
+    local exit_code="$?"
+    echo -e "Error occurred (Exit code: $exit_code)"
+    exit "$exit_code"
+}
+trap handle_error ERR
+
+# Check if DCSSBAUTOINSTALL environment variable is set to 1
+if [ "${DCSSBAUTOINSTALL}" != "1" ]; then
+    echo "DCSSBAUTOINSTALL is not set to 1. Exiting."
+    exit 0
+fi
+
+# Set the directory path
+repo_dir="/config/.wine/drive_c/users/abc/DCSServerBot"
+
+# Set the Git repository URL
+repo_url="https://github.com/Special-K-s-Flightsim-Bots/DCSServerBot.git"
+
+# Needed to export into the EOF subshell.
+export repo_dir
+export repo_url
+
+if [ -d "$repo_dir" ]; then
+    # Ensure that the repo folder is owned by the user from the container.
+    lsiown -R abc:users $repo_dir
+fi
+
+# Note single quotes 'EOF' to prevent variable expansion.
+sudo -E -u abc bash <<'EOF'
+
+# Function to clone Git repository
+clone_git_repo() {
+    local repo_url="$1"
+    local repo_dir="$2"
+
+    echo "Cloning Git repository to $repo_dir..."
+    git clone "$repo_url" "$repo_dir"
+}
+
+# Check if the directory exists
+if [ -d "$repo_dir" ]; then
+
+    # Check if it's a Git repository
+    # Change to the directory
+    cd "$repo_dir" || exit 1
+
+    # Check if it's a Git repository
+    if git rev-parse --git-dir > /dev/null 2>&1; then
+        # It's a Git repository, check if it matches the specified URL
+        remote_url=$(git config --get remote.origin.url)
+
+        if [ "$remote_url" == "$repo_url" ]; then
+            # It's the correct Git repository, pull the latest changes
+            echo "Correct Git repository found. Pulling the latest changes..."
+            git pull
+        else
+            # It's not the correct Git repository, show an error message
+            echo "Error: The existing Git repository does not match the specified URL."
+            echo "Exiting."
+            exit 1
+        fi
+    else
+        # It's not a Git repository, check if it's empty
+        if [ -z "$(ls -A)" ]; then
+            # It's an empty directory, call the function to clone the Git repository
+            clone_git_repo "$repo_url" "$repo_dir"
+        else
+            # It's not an empty directory, show an error message
+            echo "Error: The directory exists but is not a Git repository, and it is not empty."
+            echo "Exiting."
+            exit 1
+        fi
+    fi
+else
+    # Directory doesn't exist, call the function to clone the Git repository
+    echo "Installing DCSSB."
+    clone_git_repo "$repo_url" "$repo_dir"
+
+    source /app/dcs_server/create_desktop_shortcut_function
+    create_desktop_shortcut "wine run.cmd" \
+                        "/etc/s6-overlay/s6-rc.d/init-dcssb-auto-installer-updater-oneshot/dcssb.png" \
+                        "Run DCSServerBot" \
+                        "true" \
+                        "/config/.wine/drive_c/users/abc/DCSServerBot/"
+                        
+    create_desktop_shortcut "wine install.cmd" \
+                        "/etc/s6-overlay/s6-rc.d/init-dcssb-auto-installer-updater-oneshot/dcssb.png" \
+                        "Setup DCSServerBot" \
+                        "true" \
+                        "/config/.wine/drive_c/users/abc/DCSServerBot/"
+
+    create_desktop_shortcut "xdg-open /config/.wine/drive_c/users/abc/DCSServerBot"\
+                        "folder-wine" \
+                        "DCSServerBot Dir" \
+                        "false"
+fi
+
+# Now ensure that Python is installed.
+
+download_python() {
+    local MAX_RETRIES=3
+    local RETRY_COUNT=0
+    local URL="https://www.python.org/ftp/python/3.11.6/python-3.11.6-amd64.exe"
+    local DOWNLOAD_PATH="/config/python-3.11.6-amd64.exe"
+    local MD5SUM="4a501c073d0d688c033d43f85e22d77e"
+    local INSTALL_PATH="/config/.wine/drive_c/users/abc/AppData/Local/Programs/Python/Python311/"
+
+    # Check if the installation directory exists
+    if [ ! -d "$INSTALL_PATH" ]; then
+        while [ "$RETRY_COUNT" -lt "$MAX_RETRIES" ]; do
+            echo -e "Python installation not found. Downloading..."
+            wget --progress=bar:force -O "$DOWNLOAD_PATH" "$URL" || true
+            DOWNLOADED_MD5SUM=$(md5sum "$DOWNLOAD_PATH" | awk '{print $1}')
+            
+            # Check if the MD5 checksum matches
+            if [ "$DOWNLOADED_MD5SUM" == "$MD5SUM" ]; then
+                echo -e "Download successful. MD5 checksum matches."
+                # Invoke the installer with Wine
+                wine "$DOWNLOAD_PATH" /quiet InstallAllUsers=0 PrependPath=1 Include_test=0
+                break
+            else
+                echo -e "Download failed. MD5 checksum does not match. Retrying in 5 seconds..."
+                RETRY_COUNT=$((RETRY_COUNT + 1))
+                sleep 5
+            fi
+        done
+
+        if [ "$RETRY_COUNT" -ge "$MAX_RETRIES" ]; then
+            echo -e "Download retry count exceeded. Downloading failed."
+        fi
+    else
+        echo -e "Python is already installed at: $INSTALL_PATH"
+    fi
+}
+
+# Call the function
+download_python
+EOF
+
+exit 0

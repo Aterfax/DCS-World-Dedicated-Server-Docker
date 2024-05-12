@@ -16,6 +16,9 @@ services:
       - ENABLE_DCS_RETRIBUTION=${ENABLE_DCS_RETRIBUTION:-0}
       # ENABLE_DCS_RETRIBUTION also requires the DOCKER_MODS Environment variable set as below to function
       # DOCKER_MODS=aterfax/dcs-world-dedicated-server-mod-retribution:latest
+      - DCSSBAUTOINSTALL=${DCSSBAUTOINSTALL:-0}
+      - DCSSBAUTOSTART=${DCSSBAUTOSTART:-0}
+      # DCS Server Bot requires you have added DOCKER_MODS=aterfax/dcs-world-dedicated-server-mod-dcsserverbot:latest
     ports:
       # Webtop WebGUI ports    
       - '3000:3000/tcp' # Webtop HTTP port - TCP only.

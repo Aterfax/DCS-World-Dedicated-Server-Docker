@@ -1,0 +1,30 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash
+
+# Source the log helper after setting the prefix
+log_prefix="s6-init-dcssb-auto-start-longrun"
+source /app/dcs_server/logger_function
+
+handle_error() {
+    local exit_code="$?"
+    echo -e "Error occurred (Exit code: $exit_code)"
+    exit "$exit_code"
+}
+trap handle_error ERR
+
+# Get / set env vars and timeout value for server check interval.
+DCSSBAUTOSTART="${DCSSBAUTOSTART:-0}"
+TIMEOUT="${TIMEOUT:-30}"
+
+# Check if DCSSBAUTOINSTALL environment variable is set to 1
+if [ "${DCSSBAUTOSTART}" != "1" ]; then
+    echo "DCSSBAUTOSTART is not set to 1. Exiting."
+    sleep ${TIMEOUT}
+    exit 0
+fi
+
+# What lies below is cursed.
+sudo -E -u abc bash <<'EOF'
+export DISPLAY=:1.0  # Set the display to the main X server display
+xfce4-terminal --title=DCSServerbot --default-working-directory=/config/.wine/drive_c/users/abc/DCSServerBot  -e 'wine /config/.wine/drive_c/users/abc/DCSServerBot/run.cmd'
+EOF
