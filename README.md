@@ -193,6 +193,25 @@ you can run ``wine install.cmd``.
 
 The Dockerfile for this mod can be found at:  [docker/Dockerfile.DockerMod.dcsserverbot](docker/Dockerfile.DockerMod.dcsserverbot)
 
+### Olympus
+
+⚠️ Experimental
+
+To use this docker mod, two variables must be added to your docker compose file:
+
+      - ENABLE_DCS_OLYMPUS=${ENABLE_DCS_OLYMPUS:-0}
+      - DCS_OLYMPUS_AUTOSTART_SERVER=${DCS_OLYMPUS_AUTOSTART_SERVER:-0}
+      - DOCKER_MODS=thedelta/dcs-world-dedicated-server-mod-olympus:latest
+
+(Note: if you use multiple docker mods, use | to add multiple mods, like `aterfax/dcs-world-dedicated-server-mod-retribution:latest|thedelta/dcs-world-dedicated-server-mod-olympus:latest`
+
+With the configurable values provided in your `.env` file as:
+
+    - ENABLE_DCS_OLYMPUS=1
+    - DCS_OLYMPUS_AUTOSTART_SERVER=1
+
+TODO: more documentation 🚀
+
 ## FAQ
 
 ### Which user am I within the container?
