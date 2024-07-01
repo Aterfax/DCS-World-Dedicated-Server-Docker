@@ -43,7 +43,7 @@ jobs:
         run: echo "DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
 
       - name: Build image and push to Docker Hub and GitHub Container Registry
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./docker
           file: ./docker/Dockerfile.DockerMod.dcs-retribution
