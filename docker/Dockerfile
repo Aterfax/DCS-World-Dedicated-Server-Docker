@@ -7,7 +7,13 @@ FROM lscr.io/linuxserver/webtop:latest
 LABEL maintainer="Aterfax"
 
 # Wine 64Bit for running EXE
-RUN apk add --no-cache wine freetype wget cabextract xdotool xdg-utils xvfb xvfb-run git python3 python3-dev py3-pip 7zip make cmake gcc g++ gfortran innoextract grep build-base linux-headers
+RUN apk add --no-cache wine freetype wget cabextract xdotool xdg-utils xvfb xvfb-run git python3 python3-dev py3-pip 7zip make cmake gcc g++ gfortran grep build-base linux-headers xz-libs boost-libs xz-dev boost-dev
+
+RUN cd /tmp 
+
+RUN git clone https://github.com/dscharrer/innoextract.git && cd innoextract && git fetch origin pull/174/head:inno_6.3 && git switch inno_6.3 && mkdir -p build && cd build && cmake .. && make && make install
+
+RUN rm -rf /tmp/*
 
 # Download the latest winetricks script (master="latest version") from Github.
 RUN wget https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks && chmod +x winetricks

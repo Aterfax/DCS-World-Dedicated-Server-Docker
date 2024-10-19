@@ -222,6 +222,41 @@ Setting seccomp to unconfined with security_opt is necessary if you encounter ``
 
 The example ``docker-compose.yml`` files include a commented out section to to this which you can uncomment. See also: https://docs.linuxserver.io/images/docker-webtop/#application-setup
 
+### Can't copy "(32) Sharing violation." errors
+
+It seems like the ``DCS_updater.exe`` executable may occasionally encounter some form of race condition where it is unable to self update due to file locking. This may relate to slower file storage areas being used for the location of the DCS server.
+
+It has been seen that simply restarting the container has allowed the update process to complete successfully.
+
+Please try restarting the container or moving the server to an SSD or higher performance data storage area.
+
+This error will appear like the log output as below:
+
+```
+00000.692 --- Log file: C:\Program Files\Eagle Dynamics\DCS World Server\autoupdate_log.txt
+00000.000 === Log opened UTC 2024-10-19 01:37:30
+00000.142 INFO : DCS_Updater/2.17.2.8 (Windows NT 10.0.19043; Win64; en-US)
+00000.142 INFO : src-id: 1bc8e7517304bc62fa4e911299a74b67759f8a4a, lib-id: b88ea51ae2210987a3865f77cc1802548216d7a8
+00000.146 INFO : cmdline: "C:\users\abc\Temp\DCS.dcs_server\DCS_updater.exe" --quiet apply 7ae07add-ecdd-40b6-a7e6-75ed1af6f399 276
+00000.450 STATUS: Initializing...
+00000.686 INFO : basedir: 
+00000.687 INFO : variant: dcs_server
+00000.690 INFO : Command: selfupdate C:\Program Files\Eagle Dynamics\DCS World Server\bin\DCS_updater.exe
+00000.690 INFO : basedir: C:\Program Files\Eagle Dynamics\DCS World Server\
+00000.691 INFO : variant: dcs_server
+00000.695 INFO : DCS/ (x86_64; EN;  WORLD,WWII-ARMOUR,SUPERCARRIER)
+00000.695 INFO : branch: dcs_server.release
+00000.695 INFO : Copying C:\users\abc\Temp\DCS.dcs_server\DCS_updater.exe to C:\Program Files\Eagle Dynamics\DCS World Server\bin\DCS_updater.exe
+00000.696 ERROR: Can't copy C:\users\abc\Temp\DCS.dcs_server\DCS_updater.exe to C:\Program Files\Eagle Dynamics\DCS World Server\bin\DCS_updater.exe: (32) Sharing violation.
+00000.696 INFO : Sleeping for 0.100000 seconds...
+00000.799 ERROR: Can't copy C:\users\abc\Temp\DCS.dcs_server\DCS_updater.exe to C:\Program Files\Eagle Dynamics\DCS World Server\bin\DCS_updater.exe: (32) Sharing violation.
+00000.799 STATUS: Got CANCEL when asked to retry: Can't copy C:\users\abc\Temp\DCS.dcs_server\DCS_updater.exe to C:\Program Files\Eagle Dynamics\DCS World Server\bin\DCS_updater.exe: (32) Sharing violation.
+00000.800 STATUS: Can't copy C:\users\abc\Temp\DCS.dcs_server\DCS_updater.exe to C:\Program Files\Eagle Dynamics\DCS World Server\bin\DCS_updater.exe: (32) Sharing violation.
+00000.838 === Log closed.
+```
+
+For further background please see: https://github.com/Aterfax/DCS-World-Dedicated-Server-Docker/issues/83
+
 ## Troubleshooting
 
 If you encounter issues, check the [Troubleshooting section](TROUBLESHOOTING.md)  for solutions to common problems.
