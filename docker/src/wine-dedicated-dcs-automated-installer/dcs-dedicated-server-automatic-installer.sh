@@ -44,7 +44,7 @@ fi
 
 if [ "$DCSAUTOINSTALL" -eq 1 ]; then
     # Validate DCSMODULES using regex (alphanumeric, underscores, or spaces)
-    if ! [[ "$DCSMODULES" =~ ^[A-Za-z0-9_[:space:]]*$ ]]; then
+    if ! [[ "$DCSMODULES" =~ ^[A-Za-z0-9_[:space:]-]*$ ]]; then
         echo "Invalid value for DCSMODULES. The list should be supplied as a whitespace separated list of modules as per https://forum.dcs.world/topic/324040-eagle-dynamics-modular-dedicated-server-installer/"
         exit 1
     fi
@@ -96,7 +96,7 @@ create_desktop_shortcut "xdg-open \"${DCS_install_dir_release}/\""\
 
 # Validate DCSMODULES using regex (alphanumeric, underscores, or spaces).
 # Works for installations or updates.
-if [[ "$DCSMODULES" =~ ^[A-Za-z0-9_[:space:]]*$ ]]; then
+if [[ "$DCSMODULES" =~ ^[A-Za-z0-9_[:space:]-]*$ ]]; then
     echo "Modules installation starting."
     /app/dcs_server/wine-dedicated-dcs-automated-installer/dcs-dedicated-server-module-installer.sh install "$DCSMODULES"
     echo
