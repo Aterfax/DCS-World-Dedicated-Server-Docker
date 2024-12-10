@@ -24,6 +24,12 @@ if [ "${DCSSBAUTOSTART}" != "1" ]; then
 fi
 
 # What lies below is cursed.
+# First update the venv packages as the DCSSB update.py won't do so due to logic that won't trigger
+sudo -E -u abc bash <<'EOF'
+wine '%USERPROFILE%\.dcssb\Scripts\python.exe -m pip install -r %USERPROFILE%\DCSServerBot\requirements.txt'
+EOF
+
+# Now start up the bot
 sudo -E -u abc bash <<'EOF'
 export DISPLAY=:1.0  # Set the display to the main X server display
 xfce4-terminal --title=DCSServerbot --default-working-directory=/config/.wine/drive_c/users/abc/DCSServerBot  -e 'wine /config/.wine/drive_c/users/abc/DCSServerBot/run.cmd'
