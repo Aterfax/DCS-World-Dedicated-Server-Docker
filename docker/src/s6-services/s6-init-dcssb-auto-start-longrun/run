@@ -36,8 +36,8 @@ fi
 
 # What lies below is cursed.
 # First update the venv packages as the DCSSB update.py won't do so due to logic that won't trigger
-sudo -E -u abc bash <<'EOF'
-wine '%USERPROFILE%\.dcssb\Scripts\python.exe -m pip install -r %USERPROFILE%\DCSServerBot\requirements.txt'
+sudo -E -u abc bash <<EOF
+wine cmd.exe /c "%USERPROFILE%\.dcssb\Scripts\python.exe -m pip install -r %USERPROFILE%\DCSServerBot\requirements.txt"
 EOF
 
 # Now start up the bot
