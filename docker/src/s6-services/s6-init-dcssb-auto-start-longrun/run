@@ -23,7 +23,24 @@ if [ "${DCSSBAUTOSTART}" != "1" ]; then
     exit 0
 fi
 
+# Define the path to the DCSSB virtual environment
+VENV_PATH="/config/.wine/drive_c/users/abc/.dcssb"
+
+# Check if the directory exists to indicate if the manual first install has happened
+if [ ! -d "$VENV_PATH" ]; then
+    echo "DCSSBAUTOSTART set to auto start but no Python virtual environment appears to exist."
+    echo "Please ensure you have manually installed DCSServerBot prior to auto starting."
+    sleep ${TIMEOUT}
+    exit 1
+fi
+
 # What lies below is cursed.
+# First update the venv packages as the DCSSB update.py won't do so due to logic that won't trigger
+sudo -E -u abc bash <<EOF
+wine cmd.exe /c "%USERPROFILE%\.dcssb\Scripts\python.exe -m pip install -r %USERPROFILE%\DCSServerBot\requirements.txt"
+EOF
+
+# Now start up the bot
 sudo -E -u abc bash <<'EOF'
 export DISPLAY=:1.0  # Set the display to the main X server display
 xfce4-terminal --title=DCSServerbot --default-working-directory=/config/.wine/drive_c/users/abc/DCSServerBot  -e 'wine /config/.wine/drive_c/users/abc/DCSServerBot/run.cmd'
