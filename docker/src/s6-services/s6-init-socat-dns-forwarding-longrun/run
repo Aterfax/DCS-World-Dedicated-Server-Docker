@@ -1,0 +1,16 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash
+
+# Source the log helper after setting the prefix
+log_prefix="s6-init-socat-dns-forwarding-longrun-longrun"
+source /app/dcs_server/logger_function
+
+# Set up error handling
+handle_error() {
+    local exit_code="$?"
+    echo -e "Error occurred (Exit code: $exit_code)"  
+    exit "$exit_code"
+}
+trap handle_error ERR
+
+socat UDP4-LISTEN:53,fork,reuseaddr UDP4:127.0.0.11:53

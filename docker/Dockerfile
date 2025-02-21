@@ -7,7 +7,7 @@ FROM lscr.io/linuxserver/webtop:latest
 LABEL maintainer="Aterfax"
 
 # Wine 64Bit for running EXE
-RUN apk add --no-cache wine freetype wget cabextract xdotool xdg-utils xvfb xvfb-run git python3 python3-dev py3-pip 7zip make cmake gcc g++ gfortran grep build-base linux-headers xz-libs boost-libs xz-dev boost-dev
+RUN apk add --no-cache wine freetype wget cabextract xdotool xdg-utils xvfb xvfb-run git python3 python3-dev py3-pip 7zip make cmake gcc g++ gfortran grep build-base linux-headers xz-libs boost-libs xz-dev boost-dev socat
 
 RUN cd /tmp 
 
@@ -24,6 +24,9 @@ RUN mkdir /config/.cache && chown abc:users -R /config/.cache
 
 COPY ./src/s6-services/s6-init-migrate-dcs-oneshot /etc/s6-overlay/s6-rc.d/init-migrate-dcs-oneshot
 RUN touch etc/s6-overlay/s6-rc.d/user/contents.d/init-migrate-dcs-oneshot
+
+COPY ./src/s6-services/s6-init-socat-dns-forwarding-longrun /etc/s6-overlay/s6-rc.d/init-socat-dns-forwarding-longrun
+RUN touch etc/s6-overlay/s6-rc.d/user/contents.d/init-socat-dns-forwarding-longrun
 
 COPY ./src/s6-services/s6-init-winepreqs-oneshot /etc/s6-overlay/s6-rc.d/init-winepreqs-oneshot
 RUN touch etc/s6-overlay/s6-rc.d/user/contents.d/init-winepreqs-oneshot
