@@ -18,6 +18,7 @@ trap handle_error ERR
 # DCS_saved_games_dir_open_beta
 # DCS_saved_games_dir_release
 # DCS_saved_games_dir_current
+# DCS_saved_games_dir_previous_1
 # DCS_install_dir_openbeta
 # DCS_install_dir_release
 source /app/dcs_server/find_dcs_dirs_function
@@ -25,40 +26,45 @@ source /app/dcs_server/find_dcs_dirs_function
 # This will correct any desktop links to use the newer "release" install path and "current" saved games directory path.
 if [ -d "/config/Desktop" ]; then
     find /config/Desktop/ -name '*.desktop' -exec sed -i 's|/config/.wine/drive_c/Program Files/Eagle Dynamics/DCS World OpenBeta Server|/config/.wine/drive_c/Program Files/Eagle Dynamics/DCS World Server|g' {} +
-    find /config/Desktop/ -name '*.desktop' -exec sed -i 's|/config/.wine/drive_c/users/abc/Saved Games/DCS.openbeta_server|/config/.wine/drive_c/users/abc/Saved Games/DCS.server|g' {} +
-    find /config/Desktop/ -name '*.desktop' -exec sed -i 's|/config/.wine/drive_c/users/abc/Saved Games/DCS.release_server|/config/.wine/drive_c/users/abc/Saved Games/DCS.server|g' {} +
+    find /config/Desktop/ -name '*.desktop' -exec sed -i 's|/config/.wine/drive_c/users/abc/Saved Games/DCS.openbeta_server|/config/.wine/drive_c/users/abc/Saved Games/DCS.dcs_serverrelease|g' {} +
+    find /config/Desktop/ -name '*.desktop' -exec sed -i 's|/config/.wine/drive_c/users/abc/Saved Games/DCS.release_server|/config/.wine/drive_c/users/abc/Saved Games/DCS.dcs_serverrelease|g' {} +
+    find /config/Desktop/ -name '*.desktop' -exec sed -i 's|/config/.wine/drive_c/users/abc/Saved Games/DCS.server|/config/.wine/drive_c/users/abc/Saved Games/DCS.dcs_serverrelease|g' {} +
 fi
 
 # Logic to shift saved games directories.
-if [[ "$DCS_saved_games_dir_current_presence_boolean" == false  ]]; then
+# Detect existing saved games source folders
+source_folders=()
+[[ -d "$DCS_saved_games_dir_open_beta" ]] && source_folders+=("$DCS_saved_games_dir_open_beta")
+[[ -d "$DCS_saved_games_dir_release" ]] && source_folders+=("$DCS_saved_games_dir_release")
+[[ -d "$DCS_saved_games_dir_previous_1" ]] && source_folders+=("$DCS_saved_games_dir_previous_1")
 
-    if [[ "$DCS_saved_games_dir_open_beta_presence_boolean" == true && "$DCS_saved_games_dir_release_presence_boolean" == false  ]]; then
-        echo "'Open Beta' saved games folder detected without the current saved game folder. Moving 'Open Beta' saved game folder to the current saved games folder path."
-        echo "${DCS_saved_games_dir_open_beta} ---> ${DCS_saved_games_dir_current}"
-        sudo -E -u abc mkdir -p "${DCS_saved_games_dir_current}"
-        mv "${DCS_saved_games_dir_open_beta}"/* "${DCS_saved_games_dir_current}"/
-        rmdir "${DCS_saved_games_dir_open_beta}"
-        echo "Folder move complete."
-    fi
+# Migration logic
+if [[ ! -d "$DCS_saved_games_dir_current" ]]; then
+    if [[ ${#source_folders[@]} -eq 1 ]]; then
+        source="${source_folders[0]}"
+        echo "Detected single saved games folder: $source"
+        echo "Migrating $source to $DCS_saved_games_dir_current..."
+        
+        sudo -E -u abc mkdir -p "$DCS_saved_games_dir_current"
+        mv "$source"/* "$DCS_saved_games_dir_current"/
+        rmdir "$source"
 
-    if [[ "$DCS_saved_games_dir_release_presence_boolean" == true && "$DCS_saved_games_dir_open_beta_presence_boolean" == false  ]]; then
-        echo "'Release' saved games folder detected without the current saved game folder. Moving 'Release' saved game folder to the current saved games folder path."
-        echo "${DCS_saved_games_dir_release} ---> ${DCS_saved_games_dir_current}"
-        sudo -E -u abc mkdir -p "${DCS_saved_games_dir_current}"
-        mv "${DCS_saved_games_dir_release}"/* "${DCS_saved_games_dir_current}"/
-        rmdir "${DCS_saved_games_dir_release}"
-        echo "Folder move complete."
-    fi
-
-    if [[ "$DCS_saved_games_dir_open_beta_presence_boolean" == true && "$DCS_saved_games_dir_release_presence_boolean" == true  ]]; then
-        MSG="'Open Beta' saved games and 'Release' saved games folder detected concurrently. User intervention required.\n"
-        MSG+="Please ensure you move your older 'Open Beta' or 'Release' saved games folder to the newer current folder: ${DCS_saved_games_dir_current}\n"
-        MSG+="Please check why the both 'Release' and 'Open Beta' folders exist before blindly overwriting!"
-        echo -e "${MSG}"
+        echo "Migration complete."
+    else
+        MSG="Multiple or no saved games folders detected.\n"
+        MSG+="Please manually inspect the following detected directories:\n"
+        
+        for folder in "${source_folders[@]}"; do
+            MSG+=" - $folder\n"
+        done
+        
+        MSG+="Then migrate manually to: $DCS_saved_games_dir_current\n"
+        MSG+="Aborting automatic migration."
+        
+        echo -e "$MSG"
         /app/dcs_server/display_GUI_warning_function "$MSG"
         exit 1
     fi
-
 fi
 
 # Logic to shift the installations directories.
@@ -81,14 +87,17 @@ if [[ "$DCS_install_dir_openbeta_presence_boolean" == true ]]; then
     fi
 fi
 
-# Pop a warning if nothing is set as we're probably just installing.
-if [[ "$DCS_saved_games_dir_open_beta_presence_boolean" == false && \
-      "$DCS_saved_games_dir_release_presence_boolean" == false && \
-      "$DCS_saved_games_dir_current_presence_boolean" == false && \
-      "$DCS_install_dir_openbeta_presence_boolean" == false && \
-      "$DCS_install_dir_release_presence_boolean" == false ]]; then
-    echo "No installations or saved games folders detected."
-    echo "We are probably installing."
-    echo "Exiting"
+# Pop a warning if no saved games or installations are detected (likely a fresh install).
+if [[ ! -d "$DCS_saved_games_dir_open_beta" && \
+      ! -d "$DCS_saved_games_dir_release" && \
+      ! -d "$DCS_saved_games_dir_previous_1" && \
+      ! -d "$DCS_saved_games_dir_current" && \
+      ! -d "$DCS_install_dir_openbeta" && \
+      ! -d "$DCS_install_dir_release" ]]; then
+    echo "No DCS installations or saved games folders detected."
+    echo "This is likely a fresh installation."
+    echo "Exiting."
+    exit 0
 fi
+
 exit 0
