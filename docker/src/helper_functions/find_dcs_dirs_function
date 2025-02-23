@@ -25,32 +25,14 @@ WINE_program_files_dir="/config/.wine/drive_c/Program Files"
 # Path variables actually checked
 DCS_saved_games_dir_open_beta="${WINE_user_saved_game_dir}/DCS.openbeta_server"
 DCS_saved_games_dir_release="${WINE_user_saved_game_dir}/DCS.release_server"
-DCS_saved_games_dir_current="${WINE_user_saved_game_dir}/DCS.server"
+DCS_saved_games_dir_current="${WINE_user_saved_game_dir}/DCS.dcs_serverrelease"
+DCS_saved_games_dir_previous_1="${WINE_user_saved_game_dir}/DCS.server"
 DCS_install_dir_openbeta="${WINE_program_files_dir}/Eagle Dynamics/DCS World OpenBeta Server"
 DCS_install_dir_release="${WINE_program_files_dir}/Eagle Dynamics/DCS World Server"
 
 # Additional helper path variables
 DCS_bin_dir_openbeta="${DCS_install_dir_openbeta}/bin"
 DCS_bin_dir_release="${DCS_install_dir_release}/bin"
-
-# Check if Saved Games directories exist
-if [[ -d "$DCS_saved_games_dir_open_beta" ]]; then
-    DCS_saved_games_dir_open_beta_presence_boolean=true
-else
-    DCS_saved_games_dir_open_beta_presence_boolean=false
-fi
-
-if [[ -d "$DCS_saved_games_dir_release" ]]; then
-    DCS_saved_games_dir_release_presence_boolean=true
-else
-    DCS_saved_games_dir_release_presence_boolean=false
-fi
-
-if [[ -d "$DCS_saved_games_dir_current" ]]; then
-    DCS_saved_games_dir_current_presence_boolean=true
-else
-    DCS_saved_games_dir_current_presence_boolean=false
-fi
 
 # Check if Installation folders exist
 if [[ -d "$DCS_install_dir_openbeta" ]]; then
@@ -64,9 +46,3 @@ if [[ -d "$DCS_install_dir_release" ]]; then
 else
     DCS_install_dir_release_presence_boolean=false
 fi
-
-# Log the results to stdout
-#echo "DCS Server OpenBeta Saved Games directory exists:" $DCS_saved_games_dir_open_beta_presence_boolean
-#echo "DCS Server Release Saved Games directory exists:" $DCS_saved_games_dir_release_presence_boolean
-#echo "DCS Server OpenBeta Installation folder exists:" $DCS_install_dir_openbeta_presence_boolean
-#echo "DCS Server Release Installation folder exists:" $DCS_install_dir_release_presence_boolean
