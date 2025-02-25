@@ -76,7 +76,6 @@ if [[ ! -d "$DCS_saved_games_dir_current" ]]; then
         
         echo -e "$MSG"
         /app/dcs_server/display_GUI_warning_function "$MSG"
-        exit 0
     fi
 fi
 
@@ -96,7 +95,6 @@ if [[ "$DCS_install_dir_openbeta_presence_boolean" == true ]]; then
         MSG+="Please check why the newer 'Release' folder exists at the same time as the old 'Open Beta' before blindly overwriting!"
         echo -e "${MSG}"
         /app/dcs_server/display_GUI_warning_function "$MSG"
-        exit 0
     fi
 fi
 
