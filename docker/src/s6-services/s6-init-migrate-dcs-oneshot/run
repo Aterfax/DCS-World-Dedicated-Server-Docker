@@ -23,6 +23,19 @@ trap handle_error ERR
 # DCS_install_dir_release
 source /app/dcs_server/find_dcs_dirs_function
 
+# Pop a warning if no saved games or installations are detected (likely a fresh install).
+if [[ ! -d "$DCS_saved_games_dir_open_beta" && \
+      ! -d "$DCS_saved_games_dir_release" && \
+      ! -d "$DCS_saved_games_dir_previous_1" && \
+      ! -d "$DCS_saved_games_dir_current" && \
+      ! -d "$DCS_install_dir_openbeta" && \
+      ! -d "$DCS_install_dir_release" ]]; then
+    echo "No DCS installations or saved games folders detected."
+    echo "This is likely a fresh installation."
+    echo "Exiting."
+    exit 0
+fi
+
 # This will correct any desktop links to use the newer "release" install path and "current" saved games directory path.
 if [ -d "/config/Desktop" ]; then
     find /config/Desktop/ -name '*.desktop' -exec sed -i 's|/config/.wine/drive_c/Program Files/Eagle Dynamics/DCS World OpenBeta Server|/config/.wine/drive_c/Program Files/Eagle Dynamics/DCS World Server|g' {} +
@@ -85,19 +98,6 @@ if [[ "$DCS_install_dir_openbeta_presence_boolean" == true ]]; then
         /app/dcs_server/display_GUI_warning_function "$MSG"
         exit 0
     fi
-fi
-
-# Pop a warning if no saved games or installations are detected (likely a fresh install).
-if [[ ! -d "$DCS_saved_games_dir_open_beta" && \
-      ! -d "$DCS_saved_games_dir_release" && \
-      ! -d "$DCS_saved_games_dir_previous_1" && \
-      ! -d "$DCS_saved_games_dir_current" && \
-      ! -d "$DCS_install_dir_openbeta" && \
-      ! -d "$DCS_install_dir_release" ]]; then
-    echo "No DCS installations or saved games folders detected."
-    echo "This is likely a fresh installation."
-    echo "Exiting."
-    exit 0
 fi
 
 exit 0
