@@ -56,6 +56,11 @@ cd /config && innoextract -e -m DCS_World_Server_modular.exe
 mkdir -p "${DCS_install_dir_release}"
 mv app/* "${DCS_install_dir_release}/" && rmdir app
 cd "${DCS_install_dir_release}/bin"
+# Break the updater race condition where it tries to update over itself while running
+mv DCS_updater.exe DCS_updater_initial.exe
+wine DCS_updater_initial.exe --quiet update
+sleep 1
+rm DCS_updater_initial.exe
 wine DCS_updater.exe --quiet install WORLD
 
 # Remove broken shortcuts.
