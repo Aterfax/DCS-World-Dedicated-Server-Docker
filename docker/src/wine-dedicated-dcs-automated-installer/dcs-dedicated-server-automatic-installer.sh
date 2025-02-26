@@ -58,10 +58,16 @@ mv app/* "${DCS_install_dir_release}/" && rmdir app
 cd "${DCS_install_dir_release}/bin"
 # Break the updater race condition where it tries to update over itself while running
 mv DCS_updater.exe DCS_updater_initial.exe
-wine DCS_updater_initial.exe --quiet update
-sleep 1
-rm DCS_updater_initial.exe
-wine DCS_updater.exe --quiet install WORLD
+wine DCS_updater_initial.exe --quiet update &
+# Ensure the updater process has finished before cleanup
+start_time=$(date +%s)
+while pgrep -f DCS_updater_initial.exe >/dev/null; do
+    elapsed=$(( $(date +%s) - start_time ))
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - Waiting for DCS_updater_initial.exe to finish... Elapsed time: ${elapsed} seconds"
+    sleep 10
+done
+# Rename it again so subsequent logic is not broken
+mv DCS_updater_initial.exe DCS_updater.exe
 
 # Remove broken shortcuts.
 rm /config/Desktop/Local\ Web\ GUI.desktop
