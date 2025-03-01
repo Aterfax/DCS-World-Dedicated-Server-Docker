@@ -7,13 +7,7 @@ FROM lscr.io/linuxserver/webtop:latest
 LABEL maintainer="Aterfax"
 
 # Wine 64Bit for running EXE
-RUN apk add --no-cache wine freetype wget cabextract xdotool xdg-utils xvfb xvfb-run git python3 python3-dev py3-pip 7zip make cmake gcc g++ gfortran grep build-base linux-headers xz-libs boost-libs xz-dev boost-dev socat
-
-RUN cd /tmp 
-
-RUN git clone https://github.com/dscharrer/innoextract.git && cd innoextract && git fetch origin pull/174/head:inno_6.3 && git switch inno_6.3 && mkdir -p build && cd build && cmake .. && make && make install
-
-RUN rm -rf /tmp/*
+RUN apk add --no-cache wine freetype wget cabextract xdotool xdg-utils xvfb xvfb-run git python3 python3-dev py3-pip 7zip grep socat
 
 # Download the latest winetricks script (master="latest version") from Github.
 RUN wget https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks && chmod +x winetricks
@@ -31,8 +25,6 @@ RUN touch etc/s6-overlay/s6-rc.d/user/contents.d/init-socat-dns-forwarding-longr
 COPY ./src/s6-services/s6-init-winepreqs-oneshot /etc/s6-overlay/s6-rc.d/init-winepreqs-oneshot
 RUN touch etc/s6-overlay/s6-rc.d/user/contents.d/init-winepreqs-oneshot
 
-COPY ./src/s6-services/s6-init-getlatest-dcs-installer-oneshot /etc/s6-overlay/s6-rc.d/init-getlatest-dcs-installer-oneshot
-RUN touch etc/s6-overlay/s6-rc.d/user/contents.d/init-getlatest-dcs-installer-oneshot
 
 COPY ./src/s6-services/s6-init-desktop-setup-oneshot /etc/s6-overlay/s6-rc.d/init-desktop-setup-oneshot
 RUN touch etc/s6-overlay/s6-rc.d/user/contents.d/init-desktop-setup-oneshot
