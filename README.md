@@ -41,7 +41,7 @@ Various automations and helper scripts are provided. In depth configuration and 
 * Take a look at the [docker-compose/Dedicated-Server](docker-compose/Dedicated-Server/) folder and ``docker-compose.yml`` file. Make amendments as needed, taking care with the volume binds ensuring the chosen location has sufficient storage.
 * Copy and amend ``.env.example `` to ``.env`` as required. If you want to validate the correct settings are applied you can run ``docker compose config`` to display what Docker will use.
 * To start the container, navigate to the [docker-compose/Dedicated-Server](docker-compose/Dedicated-Server/) directory and then run the command ``docker compose up -d && docker logs -f dcs-world-dedicated-server``.
-* On first start, (if ``DCSAUTOINSTALL=1``,) the container will download and install the WINE prerequisites and modular Dedicated DCS server executable then begin installation of the DCS Server and your chosen terrain modules. You can open the WebGUI at the default port ``3000`` or your chosen port to observe this process.
+* On first start, (if ``DCSAUTOINSTALL=1``,) the container will download and install the WINE prerequisites and modular Dedicated DCS server executable then begin installation of the DCS Server and your chosen terrain modules. You can open the WebGUI at the default port ``3000`` or your chosen port to observe this process. Note: the default username is `abc` for the webUI.
 * If you wish to manually request installation, you can run the installer with the ``Run DCS Install`` desktop shortcut or by opening a terminal and running the command:
         
         /app/dcs_server/wine-dedicated-dcs-automated-installer/dcs-dedicated-server-automatic-installer.sh 
@@ -194,6 +194,10 @@ you can run ``wine install.cmd``.
 The Dockerfile for this mod can be found at:  [docker/Dockerfile.DockerMod.dcsserverbot](docker/Dockerfile.DockerMod.dcsserverbot)
 
 ## FAQ
+
+### I set the password for the webUI, what is the username?
+
+The ``abc`` user unless you have explored the [linuxserver/webtop image](https://docs.linuxserver.io/images/docker-webtop) documentation and changed it from the default.
 
 ### Which user am I within the container?
 
