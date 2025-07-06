@@ -141,12 +141,12 @@ create_desktop_shortcut "/app/dcs_server/wine-dedicated-dcs-automated-installer/
                         "true"
 
 create_desktop_shortcut "xdg-open \"${DCS_saved_games_dir_current}/\""\
-                        "folder-wine" \
+                        "folder" \
                         "DCS Saved Games Dir" \
                         "false"
 
 create_desktop_shortcut "xdg-open \"${DCS_install_dir_release}/\""\
-                        "folder-wine" \
+                        "folder" \
                         "DCS Install Dir" \
                         "false"
 
