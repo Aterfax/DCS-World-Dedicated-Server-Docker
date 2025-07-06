@@ -55,6 +55,10 @@ Mariana Islands,MARIANAISLANDS_terrain
 South Atlantic,FALKLANDS_terrain
 Sinai,SINAIMAP_terrain
 Kola,KOLA_terrain
+Afghanistan,AFGHANISTAN_terrain
+Iraq,IRAQ_terrain
+Germany Cold War,GERMANYCW_terrain
+Marianas  WWII,MARIANAISLANDSWWII_terrain
 "
 
 # Convert the CSV data into an array
