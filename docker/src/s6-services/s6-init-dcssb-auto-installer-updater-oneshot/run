@@ -98,7 +98,7 @@ else
                         "/config/.wine/drive_c/users/abc/DCSServerBot/"
 
     create_desktop_shortcut "xdg-open /config/.wine/drive_c/users/abc/DCSServerBot"\
-                        "folder-wine" \
+                        "folder" \
                         "DCSServerBot Dir" \
                         "false"
 fi
