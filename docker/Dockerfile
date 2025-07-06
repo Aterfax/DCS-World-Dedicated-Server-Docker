@@ -10,7 +10,7 @@ LABEL maintainer="Aterfax"
 RUN sudo dpkg --add-architecture i386 ; apt update
 
 # Wine for running EXE
-RUN apt-get update && apt-get install -y --no-install-recommends unzip wine wine64 wine32:i386 libfreetype6 wget cabextract xdotool xdg-utils xvfb git python3 python3-dev python3-pip 7zip grep socat
+RUN apt-get update && apt-get install -y --no-install-recommends unzip wine wine64 wine32:i386 libfreetype6 fonts-freefont-ttf wget cabextract xdotool xdg-utils xvfb git python3 python3-dev python3-pip p7zip-full grep socat nano vim
 
 # Download the latest winetricks script (master="latest version") from Github.
 RUN wget https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks && chmod +x winetricks
