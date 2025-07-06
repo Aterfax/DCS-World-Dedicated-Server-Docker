@@ -20,6 +20,7 @@ set -e
 sleep 5
 
 # Ensure that the wine prefix is owned by the user from the container.
+mkdir -p /config/.wine /config/.cache
 lsiown -R abc:users /config/.wine 
 lsiown -R abc:users /config/.cache 
 
