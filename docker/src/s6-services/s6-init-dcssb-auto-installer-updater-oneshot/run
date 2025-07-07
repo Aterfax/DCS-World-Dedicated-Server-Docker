@@ -33,6 +33,11 @@ if [ -d "$repo_dir" ]; then
     lsiown -R abc:users $repo_dir
 fi
 
+# Avoid issue with Python hitting an error as:
+# wine: Unimplemented function ucrtbase.dll.crealf called at address ...
+
+sudo -u abc /usr/bin/winetricks --unattended vcrun2017 
+
 # Note single quotes 'EOF' to prevent variable expansion.
 sudo -E -u abc bash <<'EOF'
 
@@ -98,7 +103,7 @@ else
                         "/config/.wine/drive_c/users/abc/DCSServerBot/"
 
     create_desktop_shortcut "xdg-open /config/.wine/drive_c/users/abc/DCSServerBot"\
-                        "folder-wine" \
+                        "folder" \
                         "DCSServerBot Dir" \
                         "false"
 fi

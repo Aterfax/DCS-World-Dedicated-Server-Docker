@@ -2,12 +2,15 @@
 # DCS-World-Dedicated-Server-Docker Dockerfile.
 # aterfax/dcs-world-dedicated-server
 #
-FROM lscr.io/linuxserver/webtop:latest
+FROM lscr.io/linuxserver/webtop:debian-xfce
 
 LABEL maintainer="Aterfax"
 
-# Wine 64Bit for running EXE
-RUN apk add --no-cache wine freetype wget cabextract xdotool xdg-utils xvfb xvfb-run git python3 python3-dev py3-pip 7zip grep socat
+# Enable 32 bit arch
+RUN sudo dpkg --add-architecture i386 ; apt update
+
+# Wine for running EXE
+RUN apt-get update && apt-get install -y --no-install-recommends unzip wine wine64 wine32:i386 libfreetype6 fonts-freefont-ttf wget cabextract xdotool xdg-utils xvfb git python3 python3-dev python3-pip p7zip-full grep socat nano vim
 
 # Download the latest winetricks script (master="latest version") from Github.
 RUN wget https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks && chmod +x winetricks
