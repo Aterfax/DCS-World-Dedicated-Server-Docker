@@ -97,7 +97,7 @@ done
 
 # Interactive selection loop
 while true; do
-    echo "Select a module by name (type 'done' to finish selection):"
+    echo "Select a module by the associated number, (type 'done' to finish selection):"
     select name in "${!module_map[@]}" "all"; do
         if [[ -n "$name" ]]; then
             if [[ "$name" == "all" ]]; then
