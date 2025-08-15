@@ -1,0 +1,28 @@
+#
+# DCS-World-Dedicated-Server-Docker-Mod-Olympus Dockerfile.
+# thedelta/dcs-world-dedicated-server-mod-olympus
+#
+# We need busybox or we have no shell commands.
+FROM busybox AS buildstage
+
+# Add the s6 scripting / helper functions for Olympus install and update.
+COPY ./src/helper_functions/create_desktop_shortcut_function /root-layer/app/dcs_server/create_desktop_shortcut_function
+COPY ./src/s6-services/s6-init-dcs-olympus-oneshot /root-layer/etc/s6-overlay/s6-rc.d/init-dcs-olympus-oneshot
+RUN mkdir -p /root-layer/etc/s6-overlay/s6-rc.d/user/contents.d/ && \
+    touch /root-layer/etc/s6-overlay/s6-rc.d/user/contents.d/init-dcs-olympus-oneshot
+
+# Add start dependency to server autostart to ensure Olympus is installed before start.    
+RUN mkdir -p /root-layer/etc/s6-overlay/s6-rc.d/init-dcs-server-autostart-longrun/dependencies.d && \
+    touch /root-layer/etc/s6-overlay/s6-rc.d/init-dcs-server-autostart-longrun/dependencies.d/init-dcs-olympus-oneshot
+
+# Add start dependency to server autostart to ensure Olympus Server is running before start.    
+COPY ./src/s6-services/s6-init-dcs-olympus-auto-start-oneshot /root-layer/etc/s6-overlay/s6-rc.d/init-dcs-olympus-auto-start-oneshot
+RUN touch /root-layer/etc/s6-overlay/s6-rc.d/user/contents.d/init-dcs-olympus-auto-start-oneshot
+
+FROM scratch
+LABEL maintainer="thedelta"
+
+# Add files from buildstage - note you can only run a single command here.
+# Subsequent COPY commands will add new layers which will be ignored by
+# the container.
+COPY --from=buildstage /root-layer/ /

@@ -1,0 +1,181 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash
+
+# Source the log helper after setting the prefix
+log_prefix="s6-init-dcs-olympus-oneshot"
+source /app/dcs_server/logger_function
+
+# Set up error handling
+handle_error() {
+    local exit_code="$?"
+    echo -e "Error occurred (Exit code: $exit_code)"
+    exit "$exit_code"
+}
+trap handle_error ERR
+
+# Get/set default value for ENABLE_DCS_OLYMPUS if not already set
+ENABLE_DCS_OLYMPUS="${ENABLE_DCS_OLYMPUS:-0}"
+echo -e "ENABLE_DCS_OLYMPUS=$ENABLE_DCS_OLYMPUS"
+
+if [ "$ENABLE_DCS_OLYMPUS" -ne 1 ]; then
+    echo "No ENABLE_DCS_OLYMPUS variable set, skipping DCS Olympus installation or update."
+    exit 0
+fi
+
+# NOTE atm only this version + fix will work. Once wine support is in stable, this will be removed and auto updates should work
+SUPPORTED_VERSION="v1.0.3"
+OLYMPUS_GITHUB_VERSION=$(curl -s https://raw.githubusercontent.com/Pax1601/DCSOlympus/main/version.json | jq -r '.version')
+
+if [[ ! -n $OLYMPUS_GITHUB_VERSION ]]; then
+    echo "Invalid response from GitHub (or invalid version.json)"
+    exit 0
+fi
+
+echo
+if [ "$OLYMPUS_GITHUB_VERSION" != "$SUPPORTED_VERSION" ]; then
+    echo "Invalid stable version ($OLYMPUS_GITHUB_VERSION). Please wait for update"
+    exit 0
+fi
+
+# Source DCS Dirs finder helper
+# This sets the following variables:
+# WINE_user_saved_game_dir="/config/.wine/drive_c/users/abc/Saved Games"
+# WINE_program_files_dir="/config/.wine/drive_c/Program Files"
+# DCS_saved_games_dir_open_beta
+# DCS_saved_games_dir_release
+# DCS_saved_games_dir_current
+# DCS_install_dir_openbeta
+# DCS_install_dir_release
+# DCS_bin_dir_openbeta
+# DCS_bin_dir_release
+source /app/dcs_server/find_dcs_dirs_function
+
+echo "Installing DCS Olympus"
+
+OLYMPUS_GITHUB_LATEST_RELEASE_JSON=$(curl -s https://api.github.com/repos/Pax1601/DCSOlympus/releases/latest)
+OLYMPUS_GITHUB_LATEST_RELEASE_ASSETS=$(echo $OLYMPUS_GITHUB_LATEST_RELEASE_JSON | jq -r .assets)
+OLYMPUS_GITHUB_RELEASE_TAG=$(echo $OLYMPUS_GITHUB_LATEST_RELEASE_JSON | jq -r .tag_name)
+
+OLYMPUS_GITHUB_LATEST_RELEASE_ZIP_DOWNLOAD=$(echo "$OLYMPUS_GITHUB_LATEST_RELEASE_ASSETS" | jq -r 'map(select((.name | endswith(".zip")) and (.name | contains("installer") | not) and .state == "uploaded")) | .[0].browser_download_url')
+
+OLYMPUS_GITHUB_LATEST_RELEASE_ZIP_TARGET="$WINE_user_saved_game_dir/dcs-olympus.zip"
+OLYMPUS_PRESENT_VERSION_FILE="$DCS_saved_games_dir_current/dcs-olympus.version.txt"
+
+echo "Checking if DCS Olympus $OLYMPUS_GITHUB_RELEASE_TAG needs to be downloaded..."
+
+# Check if there is no file or version mismatch
+if [ ! -f "$OLYMPUS_PRESENT_VERSION_FILE" ] || grep -v "$OLYMPUS_GITHUB_RELEASE_TAG" "$OLYMPUS_PRESENT_VERSION_FILE"; then
+    echo "Downloading Olympus: $OLYMPUS_GITHUB_LATEST_RELEASE_ZIP_DOWNLOAD as $OLYMPUS_GITHUB_LATEST_RELEASE_ZIP_TARGET"
+
+    sudo -E -u abc wget "$OLYMPUS_GITHUB_LATEST_RELEASE_ZIP_DOWNLOAD" -O "$OLYMPUS_GITHUB_LATEST_RELEASE_ZIP_TARGET" &&
+        sudo -E -u abc unzip -qq -o "$OLYMPUS_GITHUB_LATEST_RELEASE_ZIP_TARGET" "Scripts/*" "Mods/*" -d "$DCS_saved_games_dir_current/" &&
+        rm "$OLYMPUS_GITHUB_LATEST_RELEASE_ZIP_TARGET" &&
+        sudo -E -u abc echo "$OLYMPUS_GITHUB_RELEASE_TAG" >"$OLYMPUS_PRESENT_VERSION_FILE"
+else
+    echo "DCS Olympus is up-2-date"
+fi
+
+# NOTE this fix is only temporary and will be removed in the future
+# we need this fix to work properly with wine for now
+# this will download and unzip dlls with different libraries which do work on wine
+
+OLYMPUS_FIX_GITHUB_LATEST_RELEASE_JSON=$(curl -s https://api.github.com/repos/TheDelta/DCSOlympus/releases/156553203)
+OLYMPUS_FIX_GITHUB_LATEST_RELEASE_ASSETS=$(echo $OLYMPUS_FIX_GITHUB_LATEST_RELEASE_JSON | jq -r .assets)
+OLYMPUS_FIX_GITHUB_RELEASE_TAG=$(echo $OLYMPUS_FIX_GITHUB_LATEST_RELEASE_JSON | jq -r .tag_name)
+
+OLYMPUS_FIX_GITHUB_LATEST_RELEASE_ZIP_DOWNLOAD=$(echo "$OLYMPUS_FIX_GITHUB_LATEST_RELEASE_ASSETS" | jq -r 'map(select((.name == "bin.zip") and .state == "uploaded")) | .[0].browser_download_url')
+OLYMPUS_FIX_GITHUB_LATEST_RELEASE_ZIP_TARGET="$WINE_user_saved_game_dir/dcs-olympus-fix.zip"
+OLYMPUS_FIX_PRESENT_VERSION_FILE="$DCS_saved_games_dir_current/dcs-olympus-fix.version.txt"
+
+OLYMPUS_MODS_PATH="$DCS_saved_games_dir_current/Mods/Services/Olympus"
+
+echo "Checking if DCS Olympus fix $OLYMPUS_FIX_GITHUB_RELEASE_TAG needs to be downloaded..."
+if [ ! -f "$OLYMPUS_FIX_PRESENT_VERSION_FILE" ] || grep -v "$OLYMPUS_FIX_GITHUB_RELEASE_TAG" "$OLYMPUS_FIX_PRESENT_VERSION_FILE"; then
+    echo "Downloading fix: $OLYMPUS_GITHUB_LATEST_RELEASE_ZIP_DOWNLOAD as $OLYMPUS_FIX_GITHUB_LATEST_RELEASE_ZIP_TARGET"
+
+    sudo -E -u abc wget "$OLYMPUS_FIX_GITHUB_LATEST_RELEASE_ZIP_DOWNLOAD" -O "$OLYMPUS_FIX_GITHUB_LATEST_RELEASE_ZIP_TARGET" &&
+        sudo -E -u abc unzip -qq -o "$OLYMPUS_FIX_GITHUB_LATEST_RELEASE_ZIP_TARGET" -d "$OLYMPUS_MODS_PATH/" &&
+        rm "$OLYMPUS_FIX_GITHUB_LATEST_RELEASE_ZIP_TARGET" &&
+        sudo -E -u abc echo "$OLYMPUS_FIX_GITHUB_RELEASE_TAG" >"$OLYMPUS_FIX_PRESENT_VERSION_FILE"
+else
+    echo "DCS Olympus fix is up-2-date"
+fi
+
+if type node >/dev/null 2>&1 && which node >/dev/null 2>&1; then
+    echo "Node.js ($(node -v)) already installed"
+else
+    echo "Installing Node.js"
+    # apk add linux-headers
+    apk add --update nodejs npm
+    echo "Node.js $(node -v) installed"
+fi
+
+# NOTE: tempfix as well, this will be removed / fixed with next version!
+# The file names are lowercase - this is not an issue on windows but on linux/wine
+echo "Check if database filename fix is applied"
+OLYMPUS_UNITS_DB_PATH="$OLYMPUS_MODS_PATH/client/public/databases/units"
+if [ ! -f "$OLYMPUS_UNITS_DB_PATH/aircraftDatabase.json" ]; then
+    ln -sf "$OLYMPUS_UNITS_DB_PATH/aircraftdatabase.json" "$OLYMPUS_UNITS_DB_PATH/aircraftDatabase.json"
+    ln -sf "$OLYMPUS_UNITS_DB_PATH/helicopterdatabase.json" "$OLYMPUS_UNITS_DB_PATH/helicopterDatabase.json"
+    ln -sf "$OLYMPUS_UNITS_DB_PATH/groundunitdatabase.json" "$OLYMPUS_UNITS_DB_PATH/groundUnitDatabase.json"
+    ln -sf "$OLYMPUS_UNITS_DB_PATH/navyunitdatabase.json" "$OLYMPUS_UNITS_DB_PATH/navyUnitDatabase.json"
+    echo "File fix applied..."
+else
+    echo "File fix already applied."
+fi
+
+# NOTE: tempfix as well, this won't be needed with >=v1.0.4
+# The config file will be in Config folder soon, for now we link it
+echo "Ensure olympus.json is linked to Config folder"
+[ -d "$DCS_saved_games_dir_current/Config" ] || sudo -E -u abc mkdir -p "$DCS_saved_games_dir_current/Config"
+if [ ! -f "$DCS_saved_games_dir_current/Config/olympus.json" ]; then
+    ln -sf "$OLYMPUS_MODS_PATH/olympus.json" "$DCS_saved_games_dir_current/Config/olympus.json"
+    echo "Link successfully created"
+else
+    echo "Link already created"
+fi
+
+# NOTE: tempfix as well, this won't be needed with >=v1.0.4
+# Create a run_client.sh to open the web frontend
+if [ ! -f "$OLYMPUS_MODS_PATH/client/run_client.sh" ]; then
+    echo 'PORT=$(cat ../olympus.json | jq -r .client.port) && xdg-open http://localhost:$PORT' >"$OLYMPUS_MODS_PATH/client/run_client.sh"
+    chown abc:users "$OLYMPUS_MODS_PATH/client/run_client.sh"
+    echo "Added run_client.sh"
+fi
+
+echo "Adding desktop shortcut..."
+# Run subsequent commands as user 'abc' using sudo
+sudo -E -u abc bash <<EOF
+# Source the desktop shortcut creation function
+# target_executable="$1"
+# icon_path="$2"
+# name="$3"
+# terminalbool="$4"
+# workdir="$5"
+source /app/dcs_server/create_desktop_shortcut_function
+
+# Create start web server shortcut
+create_desktop_shortcut "bash -c 'node ./bin/www; bash'" \
+                        "$OLYMPUS_MODS_PATH/img/olympus_server.ico" \
+                        "Olympus Server" \
+                        "true" \
+                        "$OLYMPUS_MODS_PATH/client/"
+
+# Create open olympus web interface shortcut
+# FIXME: run_client is not working for linux/wine
+create_desktop_shortcut "bash run_client.sh" \
+                        "$OLYMPUS_MODS_PATH/img/olympus.ico" \
+                        "Olympus Client" \
+                        "false" \
+                        "$OLYMPUS_MODS_PATH/client/"
+
+# Create open olympus configurator shortcut
+create_desktop_shortcut "node configurator.js" \
+                        "$OLYMPUS_MODS_PATH/img/olympus_configurator.ico" \
+                        "Olympus Configurator" \
+                        "true" \
+                        "$OLYMPUS_MODS_PATH/client/"             
+EOF
+
+echo "DCS Olympus installation complete."
+exit 0
