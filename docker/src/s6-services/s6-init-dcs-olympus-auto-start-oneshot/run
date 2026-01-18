@@ -1,0 +1,40 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash
+
+# Source the log helper after setting the prefix
+log_prefix="s6-init-dcs-olympus-auto-start-oneshot"
+source /app/dcs_server/logger_function
+
+handle_error() {
+    local exit_code="$?"
+    echo -e "Error occurred (Exit code: $exit_code)"
+    exit "$exit_code"
+}
+trap handle_error ERR
+
+DCS_OLYMPUS_AUTOSTART_SERVER="${DCS_OLYMPUS_AUTOSTART_SERVER:-0}"
+
+# Check if DCSSBAUTOINSTALL environment variable is set to 1
+if [ "${DCS_OLYMPUS_AUTOSTART_SERVER}" != "1" ]; then
+    echo "DCS_OLYMPUS_AUTOSTART_SERVER is not set to 1. Exiting."
+    exit 0
+fi
+
+# Source DCS Dirs finder helper
+# This sets the following variables:
+# WINE_user_saved_game_dir="/config/.wine/drive_c/users/abc/Saved Games"
+# WINE_program_files_dir="/config/.wine/drive_c/Program Files"
+# DCS_saved_games_dir_open_beta
+# DCS_saved_games_dir_release
+# DCS_saved_games_dir_current
+# DCS_install_dir_openbeta
+# DCS_install_dir_release
+# DCS_bin_dir_openbeta
+# DCS_bin_dir_release
+source /app/dcs_server/find_dcs_dirs_function
+
+OLYMPUS_MODS_PATH="$DCS_saved_games_dir_current/Mods/Services/Olympus/"
+
+sudo -E -u abc bash <<EOF
+uxterm -e 'cd "$OLYMPUS_MODS_PATH/client/" && node ./bin/www; bash'
+EOF
