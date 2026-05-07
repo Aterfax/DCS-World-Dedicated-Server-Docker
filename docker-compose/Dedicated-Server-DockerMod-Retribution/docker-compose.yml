@@ -16,7 +16,8 @@ services:
       - TIMEOUT=${TIMEOUT:-30}
       - ENABLE_DCS_RETRIBUTION=${ENABLE_DCS_RETRIBUTION:-0}
       - ENABLE_DCS_RETRIBUTION_REMOTE=${ENABLE_DCS_RETRIBUTION_REMOTE:-0}
-      - DOCKER_MODS=aterfax/dcs-world-dedicated-server-mod-retribution:latest
+      - DOCKER_MODS=${DOCKER_MODS:-aterfax/dcs-world-dedicated-server-mod-retribution:latest}
+      - RETRIBUTION_REMOTE_REPO=${RETRIBUTION_REMOTE_REPO:-omltcat/dcs-retribution-remote}
       - DCSSBAUTOINSTALL=${DCSSBAUTOINSTALL:-0}
       - DCSSBAUTOSTART=${DCSSBAUTOSTART:-0}
       # DCS Server Bot requires you have added DOCKER_MODS=aterfax/dcs-world-dedicated-server-mod-dcsserverbot:latest
@@ -49,3 +50,4 @@ services:
       #- seccomp=unconfined
     restart: always
     image: aterfax/dcs-world-dedicated-server
+    platform: linux/amd64
