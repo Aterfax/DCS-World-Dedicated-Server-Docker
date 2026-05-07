@@ -11,10 +11,19 @@ COPY ./src/s6-services/s6-init-dcs-retribution-auto-installer-updater-oneshot /r
 RUN mkdir -p /root-layer/etc/s6-overlay/s6-rc.d/user/contents.d/ && \
     touch /root-layer/etc/s6-overlay/s6-rc.d/user/contents.d/init-dcs-retribution-auto-installer-updater-oneshot
 
+# Add the s6 scripting for Retribution Remote install and update.
+COPY ./src/s6-services/s6-init-dcs-retribution-remote-auto-installer-updater-oneshot /root-layer/etc/s6-overlay/s6-rc.d/init-dcs-retribution-remote-auto-installer-updater-oneshot
+RUN mkdir -p /root-layer/etc/s6-overlay/s6-rc.d/user/contents.d/ && \
+    touch /root-layer/etc/s6-overlay/s6-rc.d/user/contents.d/init-dcs-retribution-remote-auto-installer-updater-oneshot
+
 # Add start dependency to server autostart to ensure Retribution is installed before start.    
 RUN mkdir -p /root-layer/etc/s6-overlay/s6-rc.d/init-dcs-server-autostart-longrun/dependencies.d && \
     touch /root-layer/etc/s6-overlay/s6-rc.d/init-dcs-server-autostart-longrun/dependencies.d/init-dcs-retribution-auto-installer-updater-oneshot
-    
+
+# Add the s6 scripting for autostarting Retribution Remote.
+COPY ./src/s6-services/s6-init-dcs-retribution-remote-auto-start-longrun /root-layer/etc/s6-overlay/s6-rc.d/init-dcs-retribution-remote-auto-start-longrun
+RUN touch /root-layer/etc/s6-overlay/s6-rc.d/user/contents.d/init-dcs-retribution-remote-auto-start-longrun
+   
 FROM scratch
 LABEL maintainer="Aterfax"
 

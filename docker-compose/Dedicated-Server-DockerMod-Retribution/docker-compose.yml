@@ -12,9 +12,12 @@ services:
       - DCSMODULES=${DCSMODULES:-}
       - FORCEREINSTALL=${FORCEREINSTALL:-0}
       - AUTOSTART=${AUTOSTART:-0}
+      - AUTOSTART_RETRIBUTION_REMOTE=${AUTOSTART_RETRIBUTION_REMOTE:-0}
       - TIMEOUT=${TIMEOUT:-30}
       - ENABLE_DCS_RETRIBUTION=${ENABLE_DCS_RETRIBUTION:-0}
-      - DOCKER_MODS=aterfax/dcs-world-dedicated-server-mod-retribution:latest
+      - ENABLE_DCS_RETRIBUTION_REMOTE=${ENABLE_DCS_RETRIBUTION_REMOTE:-0}
+      - DOCKER_MODS=${DOCKER_MODS:-aterfax/dcs-world-dedicated-server-mod-retribution:latest}
+      - RETRIBUTION_REMOTE_REPO=${RETRIBUTION_REMOTE_REPO:-omltcat/dcs-retribution-remote}
       - DCSSBAUTOINSTALL=${DCSSBAUTOINSTALL:-0}
       - DCSSBAUTOSTART=${DCSSBAUTOSTART:-0}
       # DCS Server Bot requires you have added DOCKER_MODS=aterfax/dcs-world-dedicated-server-mod-dcsserverbot:latest
@@ -29,6 +32,7 @@ services:
       #- '10309:10309/tcp' # Multiplayer game VOIP traffic - TCP - Uncomment if in game VOIP is desired.
       #- '10309:10309/udp' # Multiplayer game VOIP traffic - UDP - Uncomment if in game VOIP is desired.      
       #- '8088:8088' # Uncomment to enable remote web control webGUI from the Eagle Dynamics website - TCP only.
+      - '9099:9099/tcp' # retribution remote control
 
       # Tacview ports
       #- '42674:42674/tcp' # Uncomment to enable TacView Real-time Telemetry if in use - TCP only.
@@ -46,3 +50,4 @@ services:
       #- seccomp=unconfined
     restart: always
     image: aterfax/dcs-world-dedicated-server
+    platform: linux/amd64
