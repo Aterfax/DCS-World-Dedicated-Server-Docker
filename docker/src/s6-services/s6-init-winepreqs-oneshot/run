@@ -38,6 +38,32 @@ sudo -u abc /usr/bin/winetricks --unattended d3dcompiler_43
 sudo -u abc /usr/bin/winetricks --unattended d3dx11_43 
 sudo -u abc /usr/bin/winetricks --unattended d3dcompiler_47 
 sudo -u abc /usr/bin/winetricks --unattended win10
+
+# As vcrun2022 even when --unattended seems to need a GUI, we now dynamically grab
+# the DISPLAY and let it use it as below.
+#
+# /tmp/.X11-unix will contain the device, usually /tmp/.X11-unix/X1
+
+XSOCK_DIR="/tmp/.X11-unix"
+
+if [[ ! -d "$XSOCK_DIR" ]]; then
+  echo "ERROR: X11 socket dir not found"
+  exit 1
+fi
+
+# Pick highest available X socket (or first)
+XSOCK=$(ls "$XSOCK_DIR" | grep -E '^X[0-9]+$' | sort | head -n 1)
+
+if [[ -z "$XSOCK" ]]; then
+  echo "ERROR: No X sockets found in $XSOCK_DIR"
+  exit 1
+fi
+
+# Example, convert X1 file to 'export DISPLAY=:1'
+DISPLAY_NUM="${XSOCK#X}"
+export DISPLAY=":${DISPLAY_NUM}"
+echo "[display-bootstrap] Detected DISPLAY=$DISPLAY"
+
 sudo -u abc /usr/bin/winetricks --unattended vcrun2022
 
 echo "Wine installations complete, Exiting." 
