@@ -16,7 +16,7 @@ jobs:
     # steps to perform in job
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Force permissions fix.
         run: sudo apt-get update && sudo apt-get install dos2unix -y && cd docker && bash dos2unix.sh
